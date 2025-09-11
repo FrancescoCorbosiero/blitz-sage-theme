@@ -1,33 +1,23 @@
 {
-  "name": "roots/sage",
+  "name": "roots/blitz",
   "type": "wordpress-theme",
   "license": "MIT",
-  "description": "WordPress starter theme with a modern development workflow",
+  "description": "Blitz - A modern, high-performance WordPress theme built with Sage 10, Laravel, and Tailwind CSS",
   "homepage": "https://roots.io/sage/",
   "authors": [
     {
-      "name": "Ben Word",
-      "email": "ben@benword.com",
-      "homepage": "https://github.com/retlehs"
-    },
-    {
-      "name": "Scott Walkinshaw",
-      "email": "scott.walkinshaw@gmail.com",
-      "homepage": "https://github.com/swalkinshaw"
-    },
-    {
-      "name": "QWp6t",
-      "email": "hi@qwp6t.me",
-      "homepage": "https://github.com/qwp6t"
-    },
-    {
-      "name": "Brandon Nifong",
-      "email": "brandon@tendency.me",
-      "homepage": "https://github.com/log1x"
+      "name": "Roots",
+      "email": "team@roots.io",
+      "homepage": "https://roots.io"
     }
   ],
   "keywords": [
-    "wordpress"
+    "wordpress",
+    "theme",
+    "sage",
+    "tailwind",
+    "laravel",
+    "blitz"
   ],
   "support": {
     "issues": "https://github.com/roots/sage/issues",
@@ -39,25 +29,51 @@
     }
   },
   "require": {
-    "php": ">=8.2",
-    "roots/acorn": "^5.0"
+    "php": "^8.2",
+    "roots/acorn": "^4.0",
+    "roots/acorn-prettify": "^1.0",
+    "spatie/laravel-html": "^3.11"
   },
   "require-dev": {
-    "laravel/pint": "^1.20"
+    "roots/sage-installer": "^2.0",
+    "squizlabs/php_codesniffer": "^3.7"
   },
   "suggest": {
-    "log1x/sage-directives": "A collection of useful Blade directives for WordPress and Sage (^1.0)."
+    "filp/whoops": "A better error page for development",
+    "log1x/sage-directives": "A collection of useful Blade directives for Sage",
+    "log1x/navi": "A developer-friendly alternative to the WordPress NavWalker",
+    "log1x/acf-composer": "Compose ACF Fields and Blocks from Sage"
   },
   "config": {
     "optimize-autoloader": true,
     "preferred-install": "dist",
-    "sort-packages": true
+    "sort-packages": true,
+    "allow-plugins": {
+      "composer/installers": true,
+      "roots/wordpress-plugin-installer": true
+    }
   },
-  "minimum-stability": "dev",
+  "minimum-stability": "stable",
   "prefer-stable": true,
   "scripts": {
+    "lint": "phpcs --extensions=php --standard=PSR12 app",
+    "fix": "phpcbf --extensions=php --standard=PSR12 app",
+    "post-install-cmd": [
+      "Roots\\Acorn\\ComposerScripts::postInstall"
+    ],
+    "post-update-cmd": [
+      "Roots\\Acorn\\ComposerScripts::postUpdate"
+    ],
     "post-autoload-dump": [
       "Roots\\Acorn\\ComposerScripts::postAutoloadDump"
     ]
+  },
+  "extra": {
+    "installer-paths": {
+      "../../mu-plugins/{$name}/": ["type:wordpress-muplugin"],
+      "../../plugins/{$name}/": ["type:wordpress-plugin"],
+      "../../themes/{$name}/": ["type:wordpress-theme"]
+    },
+    "wordpress-install-dir": "../../wp"
   }
 }

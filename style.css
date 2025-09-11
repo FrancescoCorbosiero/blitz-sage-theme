@@ -1,13 +1,15 @@
 /*
-Theme Name:         Sage Starter Theme
+Theme Name:         Blitz
 Theme URI:          https://roots.io/sage/
-Description:        Sage is a WordPress starter theme.
-Version:            11.0.1
+Description:        A modern, high-performance WordPress theme built with Sage 10, Laravel, and Tailwind CSS. Features self-contained components, advanced optimization, and enterprise-ready architecture.
+Version:            1.0.0
 Author:             Roots
 Author URI:         https://roots.io/
-Text Domain:        sage
+Text Domain:        blitz
 License:            MIT License
 License URI:        https://opensource.org/licenses/MIT
 Requires PHP:       8.2
 Requires at least:  6.6
+Tested up to:       6.7
+Tags:               custom-background, custom-logo, custom-menu, featured-images, threaded-comments, translation-ready, block-styles, wide-blocks, accessibility-ready, tailwind, sage, performance
 */
