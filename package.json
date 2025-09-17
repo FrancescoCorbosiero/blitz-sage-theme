@@ -1,27 +1,46 @@
 {
   "name": "blitz-theme",
+  "version": "1.0.0",
+  "description": "A modern, high-performance WordPress theme built with Sage 10, Laravel, and Tailwind CSS",
+  "author": "Roots",
+  "license": "MIT",
   "private": true,
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
   },
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:https": "vite --https",
     "build": "vite build",
     "build:analyze": "vite build --mode analyze",
+    "build:production": "NODE_ENV=production vite build",
     "preview": "vite preview",
     "clean": "rm -rf public/build",
+    "clean:all": "rm -rf public/build node_modules vendor",
+    "lint": "eslint resources/js --ext .js",
+    "lint:fix": "eslint resources/js --ext .js --fix",
+    "lint:css": "stylelint 'resources/css/**/*.css'",
+    "format": "prettier --write 'resources/**/*.{js,css,blade.php}'",
     "translate": "npm run translate:pot && npm run translate:update",
     "translate:pot": "wp i18n make-pot . ./resources/lang/blitz.pot --include=\"theme.json,patterns,app,resources\"",
     "translate:update": "for file in ./resources/lang/*.po; do wp i18n update-po ./resources/lang/blitz.pot $file; done",
     "translate:compile": "npm run translate:mo && npm run translate:js",
     "translate:js": "wp i18n make-json ./resources/lang --pretty-print",
-    "translate:mo": "wp i18n make-mo ./resources/lang ./resources/lang"
+    "translate:mo": "wp i18n make-mo ./resources/lang ./resources/lang",
+    "test": "echo \"No tests specified\" && exit 0",
+    "postinstall": "npm run build"
   },
   "devDependencies": {
     "@roots/vite-plugin": "^1.0.2",
     "@tailwindcss/vite": "^4.0.9",
+    "eslint": "^8.57.0",
     "laravel-vite-plugin": "^1.2.0",
+    "prettier": "^3.2.5",
+    "rollup-plugin-visualizer": "^5.12.0",
+    "stylelint": "^16.2.1",
+    "stylelint-config-standard": "^36.0.0",
     "tailwindcss": "^4.0.9",
     "vite": "^6.2.0",
     "vite-plugin-compression": "^0.5.1",
@@ -29,12 +48,66 @@
   },
   "dependencies": {
     "@alpinejs/collapse": "^3.13.3",
+    "@alpinejs/focus": "^3.13.3",
     "@alpinejs/intersect": "^3.13.3",
+    "@alpinejs/persist": "^3.13.3",
     "alpinejs": "^3.13.3",
     "aos": "^2.3.4",
     "flatpickr": "^4.6.13",
     "glightbox": "^3.2.0",
     "swiper": "^11.0.0",
     "typed.js": "^2.1.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "prettier": {
+    "semi": false,
+    "singleQuote": true,
+    "trailingComma": "es5",
+    "printWidth": 100,
+    "tabWidth": 2,
+    "useTabs": false,
+    "bracketSpacing": true,
+    "arrowParens": "always"
+  },
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "es2021": true,
+      "node": true
+    },
+    "extends": "eslint:recommended",
+    "parserOptions": {
+      "ecmaVersion": 2021,
+      "sourceType": "module"
+    },
+    "rules": {
+      "no-console": "warn",
+      "no-debugger": "warn"
+    }
+  },
+  "stylelint": {
+    "extends": "stylelint-config-standard",
+    "rules": {
+      "at-rule-no-unknown": [
+        true,
+        {
+          "ignoreAtRules": [
+            "tailwind",
+            "apply",
+            "variants",
+            "responsive",
+            "screen",
+            "layer"
+          ]
+        }
+      ],
+      "selector-class-pattern": null
+    }
   }
 }

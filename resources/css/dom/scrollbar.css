@@ -1,0 +1,21 @@
+
+/* Default Scrollbar - Theme Aware */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+  border-radius: 100px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--sage-light) 0%, var(--sage) 100%);
+  border-radius: 100px;
+  border: 3px solid var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--sage) 0%, var(--primary-soft) 100%);
+}

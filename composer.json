@@ -32,17 +32,24 @@
     "php": "^8.2",
     "roots/acorn": "^4.0",
     "roots/acorn-prettify": "^1.0",
-    "spatie/laravel-html": "^3.11"
+    "spatie/laravel-html": "^3.11",
+    "log1x/navi": "^2.0",
+    "log1x/sage-directives": "^2.0",
+    "illuminate/support": "^11.0",
+    "illuminate/collections": "^11.0"
   },
   "require-dev": {
     "roots/sage-installer": "^2.0",
-    "squizlabs/php_codesniffer": "^3.7"
+    "squizlabs/php_codesniffer": "^3.7",
+    "phpstan/phpstan": "^1.10",
+    "laravel/pint": "^1.13",
+    "filp/whoops": "^2.15"
   },
   "suggest": {
-    "filp/whoops": "A better error page for development",
-    "log1x/sage-directives": "A collection of useful Blade directives for Sage",
-    "log1x/navi": "A developer-friendly alternative to the WordPress NavWalker",
-    "log1x/acf-composer": "Compose ACF Fields and Blocks from Sage"
+    "log1x/acf-composer": "Compose ACF Fields and Blocks from Sage",
+    "log1x/sage-svg": "SVG directive for Sage",
+    "log1x/poet": "Configuration-based post types and taxonomies",
+    "stoutlogic/acf-builder": "Fluent ACF field group builder"
   },
   "config": {
     "optimize-autoloader": true,
@@ -51,6 +58,9 @@
     "allow-plugins": {
       "composer/installers": true,
       "roots/wordpress-plugin-installer": true
+    },
+    "platform": {
+      "php": "8.2"
     }
   },
   "minimum-stability": "stable",
@@ -58,6 +68,9 @@
   "scripts": {
     "lint": "phpcs --extensions=php --standard=PSR12 app",
     "fix": "phpcbf --extensions=php --standard=PSR12 app",
+    "format": "pint",
+    "analyze": "phpstan analyse app --level=5",
+    "test": "phpunit",
     "post-install-cmd": [
       "Roots\\Acorn\\ComposerScripts::postInstall"
     ],
@@ -66,6 +79,12 @@
     ],
     "post-autoload-dump": [
       "Roots\\Acorn\\ComposerScripts::postAutoloadDump"
+    ],
+    "post-create-project-cmd": [
+      "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
+      "@composer install",
+      "@npm install",
+      "@npm run build"
     ]
   },
   "extra": {
@@ -74,6 +93,11 @@
       "../../plugins/{$name}/": ["type:wordpress-plugin"],
       "../../themes/{$name}/": ["type:wordpress-theme"]
     },
-    "wordpress-install-dir": "../../wp"
+    "wordpress-install-dir": "../../wp",
+    "acorn": {
+      "providers": [
+        "App\\Providers\\ThemeServiceProvider"
+      ]
+    }
   }
 }

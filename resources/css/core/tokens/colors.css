@@ -1,0 +1,127 @@
+/* resources/css/core/tokens/colors.css */
+
+:root {
+  /* Primary Palette */
+  --primary: #1a3d0a;
+  --primary-dark: #0a1f0a;
+  --primary-light: #2d5016;
+  --primary-soft: #4a7c28;
+  --primary-glow: #6fa04d;
+  --primary-rgb: 74, 124, 40;
+  
+  /* Accent Colors */
+  --accent: #f97316;
+  --accent-dark: #ea580c;
+  --accent-light: #fb923c;
+  --accent-glow: #ff8c42;
+  --accent-rgb: 249, 115, 22;
+  
+  /* Sage/Nature Palette */
+  --sage: #87a878;
+  --sage-light: #a3c394;
+  --sage-dark: #6b8b5c;
+  
+  /* Cream/Sand Palette */
+  --cream: #faf8f3;
+  --cream-dark: #f0ebe0;
+  --sand: #e6dcc8;
+  
+  /* Background Colors */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f8f8;
+  --bg-tertiary: #f0f0f0;
+  --card-bg: #ffffff;
+  
+  /* Text Colors */
+  --text-primary: #1a1a1a;
+  --text-secondary: #4a4a4a;
+  --text-muted: #6a6a6a;
+  --text-inverse: #ffffff;
+  
+  /* Border & Shadow */
+  --border-color: #e0e0e0;
+  --border-light: #f0f0f0;
+  --shadow: rgba(0, 0, 0, 0.1);
+  --shadow-sm: rgba(0, 0, 0, 0.05);
+  --shadow-lg: rgba(0, 0, 0, 0.15);
+  
+  /* Semantic Colors */
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #3b82f6;
+  
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  --gradient-accent: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+  --gradient-default: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+  --gradient-hero: linear-gradient(135deg, var(--primary-soft) 0%, var(--sage) 100%);
+}
+
+/* Dark Theme */
+[data-theme="dark"] {
+  /* Backgrounds */
+  --bg-primary: #0f1419;
+  --bg-secondary: #1a1f2e;
+  --bg-tertiary: #242938;
+  --card-bg: #1a1f2e;
+  
+  /* Text */
+  --text-primary: #e4e6ea;
+  --text-secondary: #b8bcc8;
+  --text-muted: #8b92a4;
+  --text-inverse: #0f1419;
+  
+  /* Borders & Shadows */
+  --border-color: #2a2f3a;
+  --border-light: #363c4a;
+  --shadow: rgba(0, 0, 0, 0.3);
+  --shadow-sm: rgba(0, 0, 0, 0.2);
+  --shadow-lg: rgba(0, 0, 0, 0.4);
+  
+  /* Adjust primary for dark mode */
+  --primary-soft: #5a8c38;
+  --primary-glow: #7fb05d;
+  
+  /* Adjust accent for dark mode */
+  --accent-glow: #ffa052;
+  
+  /* Gradients for dark mode */
+  --gradient-default: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+  --gradient-hero: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--primary-dark) 100%);
+}
+
+/* Auto theme - follows system preference */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    /* Backgrounds */
+    --bg-primary: #0f1419;
+    --bg-secondary: #1a1f2e;
+    --bg-tertiary: #242938;
+    --card-bg: #1a1f2e;
+    
+    /* Text */
+    --text-primary: #e4e6ea;
+    --text-secondary: #b8bcc8;
+    --text-muted: #8b92a4;
+    --text-inverse: #0f1419;
+    
+    /* Borders & Shadows */
+    --border-color: #2a2f3a;
+    --border-light: #363c4a;
+    --shadow: rgba(0, 0, 0, 0.3);
+    --shadow-sm: rgba(0, 0, 0, 0.2);
+    --shadow-lg: rgba(0, 0, 0, 0.4);
+    
+    /* Adjust primary for dark mode */
+    --primary-soft: #5a8c38;
+    --primary-glow: #7fb05d;
+    
+    /* Adjust accent for dark mode */
+    --accent-glow: #ffa052;
+    
+    /* Gradients for dark mode */
+    --gradient-default: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+    --gradient-hero: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--primary-dark) 100%);
+  }
+}

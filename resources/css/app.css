@@ -1,3 +1,102 @@
-@import "tailwindcss" theme(static);
-@source "../views/";
-@source "../../app/";
+/* resources/css/app.css */
+
+/* Define layer order */
+@layer reset, base, tokens, utilities, components;
+
+/* Tailwind import - MUST be first */
+@import "tailwindcss";
+
+/* Core tokens (CSS variables) */
+@import "./core/tokens/colors.css" layer(tokens);
+@import "./core/tokens/spacing.css" layer(tokens);
+@import "./core/tokens/typography.css" layer(tokens);
+@import "./core/tokens/animations.css" layer(tokens);
+
+/* DOM-specific styles */
+@import "./dom/body.css" layer(base);
+@import "./dom/loading.css" layer(components);
+@import "./dom/scrollbar.css" layer(components);
+@import "./dom/theme-toggle.css" layer(components);
+
+/* Utility classes */
+@import "./core/utilities/forms.css" layer(utilities);
+@import "./core/utilities/effects.css" layer(utilities);
+
+/* Global resets */
+@layer reset {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Remove default margins */
+  body, h1, h2, h3, h4, h5, h6, p, ul, ol, figure, blockquote, dl, dd {
+    margin: 0;
+  }
+  
+  /* Reset list styles */
+  ul[role='list'], 
+  ol[role='list'] {
+    list-style: none;
+    padding: 0;
+  }
+  
+  /* Set core root defaults */
+  html:focus-within {
+    scroll-behavior: smooth;
+  }
+  
+  /* Images are responsive by default */
+  img, picture, video, canvas, svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+  
+  /* Inherit fonts for form controls */
+  input, button, textarea, select {
+    font: inherit;
+  }
+  
+  /* Remove animations for reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    html:focus-within {
+      scroll-behavior: auto;
+    }
+    
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* Base layer - minimal body setup */
+@layer base {
+  body {
+    min-height: 100vh;
+    text-rendering: optimizeSpeed;
+    line-height: 1.6;
+    position: relative;
+    overflow-x: hidden;
+  }
+  
+  /* Focus visible only for keyboard navigation */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+  
+  :focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+}

@@ -1,0 +1,109 @@
+/* resources/css/dom/body.css */
+
+/* Body styling with animated background effects */
+body {
+  /* Typography */
+  font-family: var(--font-body);
+  font-weight: var(--font-normal);
+  line-height: var(--leading-normal);
+  letter-spacing: var(--tracking-normal);
+  font-feature-settings: 'ss01' on, 'ss02' on, 'cv01' on;
+  
+  /* Colors */
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  
+  /* Transitions */
+  transition: 
+    background-color 0.3s var(--ease-default), 
+    color 0.3s var(--ease-default);
+}
+
+/* Layer 1: Animated gradient orbs */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 20% 50%, rgba(var(--primary-rgb), 0.05) 0%, transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(var(--accent-rgb), 0.04) 0%, transparent 40%),
+    radial-gradient(circle at 40% 20%, rgba(135, 168, 120, 0.04) 0%, transparent 40%),
+    radial-gradient(circle at 70% 40%, rgba(156, 39, 176, 0.03) 0%, transparent 35%),
+    radial-gradient(circle at 10% 90%, rgba(0, 188, 212, 0.03) 0%, transparent 35%);
+  pointer-events: none;
+  z-index: 1;
+  animation: float 20s ease-in-out infinite;
+  transition: opacity 0.3s var(--ease-default);
+}
+
+/* Layer 2: Rotating gradient mesh */
+body::after {
+  content: '';
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: 
+    conic-gradient(from 0deg at 30% 30%, 
+      rgba(var(--primary-rgb), 0.02) 0deg,
+      rgba(var(--accent-rgb), 0.02) 60deg,
+      rgba(135, 168, 120, 0.02) 120deg,
+      rgba(156, 39, 176, 0.02) 180deg,
+      rgba(0, 188, 212, 0.02) 240deg,
+      rgba(var(--primary-rgb), 0.02) 360deg);
+  pointer-events: none;
+  z-index: 0;
+  animation: rotate 60s linear infinite;
+  filter: blur(40px);
+  opacity: 0.6;
+}
+
+/* Dark mode adjustments */
+[data-theme="dark"] body::before {
+  background-image: 
+    radial-gradient(circle at 20% 50%, rgba(163, 195, 148, 0.12) 0%, transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(var(--accent-rgb), 0.10) 0%, transparent 40%),
+    radial-gradient(circle at 40% 20%, rgba(135, 168, 120, 0.10) 0%, transparent 40%),
+    radial-gradient(circle at 70% 40%, rgba(156, 39, 176, 0.08) 0%, transparent 35%),
+    radial-gradient(circle at 10% 90%, rgba(0, 188, 212, 0.08) 0%, transparent 35%);
+}
+
+[data-theme="dark"] body::after {
+  opacity: 0.4;
+  mix-blend-mode: plus-lighter;
+}
+
+/* Auto dark mode support */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) body::before {
+    background-image: 
+      radial-gradient(circle at 20% 50%, rgba(163, 195, 148, 0.12) 0%, transparent 40%),
+      radial-gradient(circle at 80% 80%, rgba(var(--accent-rgb), 0.10) 0%, transparent 40%),
+      radial-gradient(circle at 40% 20%, rgba(135, 168, 120, 0.10) 0%, transparent 40%),
+      radial-gradient(circle at 70% 40%, rgba(156, 39, 176, 0.08) 0%, transparent 35%),
+      radial-gradient(circle at 10% 90%, rgba(0, 188, 212, 0.08) 0%, transparent 35%);
+  }
+  
+  :root:not([data-theme="light"]) body::after {
+    opacity: 0.4;
+    mix-blend-mode: plus-lighter;
+  }
+}
+
+/* Performance optimization for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  body::before,
+  body::after {
+    animation: none;
+  }
+}
+
+/* Main app container */
+#app {
+  position: relative;
+  z-index: 2;
+}

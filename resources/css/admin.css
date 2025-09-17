@@ -1,0 +1,416 @@
+/**
+ * Blitz Theme Admin Styles
+ * Custom styling for WordPress admin area
+ */
+
+/* Admin Color Scheme Variables */
+:root {
+    --blitz-primary: #3b82f6;
+    --blitz-primary-dark: #2563eb;
+    --blitz-primary-light: #60a5fa;
+    --blitz-success: #10b981;
+    --blitz-warning: #f59e0b;
+    --blitz-danger: #ef4444;
+    --blitz-dark: #1f2937;
+    --blitz-light: #f3f4f6;
+}
+
+/* Enhanced Admin Bar */
+#wpadminbar {
+    background: linear-gradient(135deg, var(--blitz-primary) 0%, var(--blitz-primary-dark) 100%);
+}
+
+#wpadminbar .ab-item,
+#wpadminbar a.ab-item,
+#wpadminbar > #wp-toolbar span.ab-label,
+#wpadminbar > #wp-toolbar span.noticon {
+    color: #ffffff;
+}
+
+#wpadminbar .ab-icon:before {
+    color: #ffffff;
+}
+
+#wpadminbar .ab-submenu {
+    background: var(--blitz-dark);
+}
+
+/* Blitz Theme Dashboard Widget */
+.blitz-dashboard-widget {
+    padding: 0;
+    margin: 0;
+}
+
+.blitz-dashboard-widget .inside {
+    padding: 0;
+    margin: 0;
+}
+
+.blitz-widget-header {
+    background: linear-gradient(135deg, var(--blitz-primary) 0%, var(--blitz-primary-dark) 100%);
+    color: white;
+    padding: 20px;
+    margin: 0;
+}
+
+.blitz-widget-header h3 {
+    margin: 0;
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.blitz-widget-content {
+    padding: 20px;
+}
+
+.blitz-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.blitz-stat-card {
+    background: var(--blitz-light);
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.blitz-stat-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--blitz-primary);
+    display: block;
+    margin-bottom: 5px;
+}
+
+.blitz-stat-label {
+    font-size: 12px;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Custom Post Type Icons Enhancement */
+#adminmenu #menu-posts-testimonial .wp-menu-image:before {
+    content: "\f122";
+    color: var(--blitz-primary-light);
+}
+
+#adminmenu #menu-posts-service .wp-menu-image:before {
+    content: "\f308";
+    color: var(--blitz-primary-light);
+}
+
+#adminmenu #menu-posts-portfolio .wp-menu-image:before {
+    content: "\f322";
+    color: var(--blitz-primary-light);
+}
+
+#adminmenu #menu-posts-team .wp-menu-image:before {
+    content: "\f307";
+    color: var(--blitz-primary-light);
+}
+
+#adminmenu #menu-posts-faq .wp-menu-image:before {
+    content: "\f223";
+    color: var(--blitz-primary-light);
+}
+
+/* Enhanced Metabox Styling */
+.postbox {
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+}
+
+.postbox .hndle {
+    background: linear-gradient(to right, var(--blitz-light), white);
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.page-options-metabox {
+    padding: 15px;
+}
+
+.page-options-metabox p {
+    margin-bottom: 15px;
+}
+
+.page-options-metabox label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 10px;
+    background: var(--blitz-light);
+    border-radius: 6px;
+    transition: background-color 0.2s;
+}
+
+.page-options-metabox label:hover {
+    background: #e5e7eb;
+}
+
+.page-options-metabox input[type="checkbox"] {
+    margin-right: 10px;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+/* Enhanced Form Styling */
+.wp-admin select,
+.wp-admin textarea,
+.wp-admin input[type="text"],
+.wp-admin input[type="password"],
+.wp-admin input[type="email"],
+.wp-admin input[type="number"],
+.wp-admin input[type="search"],
+.wp-admin input[type="tel"],
+.wp-admin input[type="url"] {
+    border-radius: 6px;
+    border-color: #d1d5db;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.wp-admin select:focus,
+.wp-admin textarea:focus,
+.wp-admin input[type="text"]:focus,
+.wp-admin input[type="password"]:focus,
+.wp-admin input[type="email"]:focus,
+.wp-admin input[type="number"]:focus,
+.wp-admin input[type="search"]:focus,
+.wp-admin input[type="tel"]:focus,
+.wp-admin input[type="url"]:focus {
+    border-color: var(--blitz-primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    outline: none;
+}
+
+/* Enhanced Buttons */
+.wp-core-ui .button-primary {
+    background: var(--blitz-primary);
+    border-color: var(--blitz-primary);
+    border-radius: 6px;
+    padding: 4px 16px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.wp-core-ui .button-primary:hover {
+    background: var(--blitz-primary-dark);
+    border-color: var(--blitz-primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+.wp-core-ui .button-secondary {
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.wp-core-ui .button-secondary:hover {
+    background: var(--blitz-light);
+    border-color: var(--blitz-primary);
+    color: var(--blitz-primary);
+}
+
+/* Status Messages Enhancement */
+.notice {
+    border-radius: 8px;
+    border-left-width: 4px;
+    padding: 12px;
+}
+
+.notice-success {
+    border-left-color: var(--blitz-success);
+    background-color: #f0fdf4;
+}
+
+.notice-warning {
+    border-left-color: var(--blitz-warning);
+    background-color: #fffbeb;
+}
+
+.notice-error {
+    border-left-color: var(--blitz-danger);
+    background-color: #fef2f2;
+}
+
+.notice-info {
+    border-left-color: var(--blitz-primary);
+    background-color: #eff6ff;
+}
+
+/* Theme Options Page */
+.blitz-theme-options {
+    max-width: 1200px;
+    margin: 20px auto;
+}
+
+.blitz-options-header {
+    background: linear-gradient(135deg, var(--blitz-primary) 0%, var(--blitz-primary-dark) 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.blitz-options-header h1 {
+    margin: 0;
+    color: white;
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.blitz-options-header p {
+    margin: 10px 0 0;
+    opacity: 0.9;
+    font-size: 16px;
+}
+
+.blitz-options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.blitz-option-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 20px;
+    transition: box-shadow 0.2s;
+}
+
+.blitz-option-card:hover {
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+}
+
+.blitz-option-card h3 {
+    margin-top: 0;
+    color: var(--blitz-dark);
+    font-size: 18px;
+    font-weight: 600;
+}
+
+/* Quick Actions Bar */
+.blitz-quick-actions {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.blitz-quick-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: var(--blitz-light);
+    border-radius: 6px;
+    text-decoration: none;
+    color: var(--blitz-dark);
+    transition: all 0.2s;
+}
+
+.blitz-quick-action:hover {
+    background: var(--blitz-primary);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+.blitz-quick-action .dashicons {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
+
+/* Performance Indicators */
+.blitz-performance-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.blitz-performance-good {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.blitz-performance-warning {
+    background: #fed7aa;
+    color: #92400e;
+}
+
+.blitz-performance-poor {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* Custom Editor Styles */
+.editor-styles-wrapper {
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+.editor-post-title__input {
+    font-family: inherit;
+    font-weight: 700;
+}
+
+/* Block Editor Enhancements */
+.block-editor-page .editor-styles-wrapper {
+    padding: 20px;
+}
+
+.wp-block {
+    max-width: 1200px;
+}
+
+/* Custom Block Styles */
+.wp-block[data-type^="blitz/"] {
+    border: 2px dashed var(--blitz-primary-light);
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 8px;
+    position: relative;
+}
+
+.wp-block[data-type^="blitz/"]:before {
+    content: "Blitz Block";
+    position: absolute;
+    top: -10px;
+    left: 10px;
+    background: white;
+    padding: 0 8px;
+    color: var(--blitz-primary);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Responsive Admin Improvements */
+@media screen and (max-width: 782px) {
+    .blitz-stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .blitz-options-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .blitz-quick-actions {
+        flex-direction: column;
+    }
+}
