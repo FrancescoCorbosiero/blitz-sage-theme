@@ -1,35 +1,58 @@
-<section class="new-block-section" 
-         x-data="newBlock(@json($data))"
-         x-init="init()">
+{{-- Enhanced block template --}}
+@php
+$blockId = $blockId ?? uniqid('block-');
+$blockClasses = implode(' ', [
+    'block',
+    "block-{$blockType ?? 'default'}",
+    $theme ?? '',
+    $spacing ?? 'py-16',
+    $animation ?? ''
+]);
+@endphp
+
+<section id="{{ $blockId }}" 
+         class="{{ $blockClasses }}"
+         x-data="block_{{ str_replace('-', '_', $blockType) }}(@json($data ?? []))"
+         x-init="init()"
+         @if($animation) data-aos="{{ $animation }}" @endif>
     
-    {{-- HTML --}}
-    <div class="new-block-content">
-        <!-- Content here -->
-    </div>
+    {{-- Block Content --}}
+    @yield('block-content')
+    
 </section>
 
+{{-- Scoped Styles --}}
+@push('block-styles')
 <style>
-    .new-block-section {
-        /* Scoped styles */
+    #{{ $blockId }} {
+        /* Block-specific styles */
+        @yield('block-styles')
     }
 </style>
+@endpush
 
+{{-- Block Script --}}
+@push('block-scripts')
 <script>
 document.addEventListener('alpine:init', () => {
-    Alpine.data('newBlock', (data = {}) => ({
-        // State
+    Alpine.data('block_{{ str_replace('-', '_', $blockType) }}', (data = {}) => ({
         ...data,
+        blockId: '{{ $blockId }}',
         
-        // Init
         init() {
-            // Use global features if needed
-            console.log('Block initialized');
+            this.setupBlock();
+            @yield('block-init')
         },
         
-        // Methods specific to this block
-        customMethod() {
-            // Block logic
-        }
+        setupBlock() {
+            // Common block initialization
+            if (window.BlockUtils) {
+                window.BlockUtils.trackEvent('block', 'view', '{{ $blockType }}');
+            }
+        },
+        
+        @yield('block-methods')
     }));
 });
 </script>
+@endpush

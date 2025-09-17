@@ -386,4 +386,19 @@ class PerformanceService
         }
         return $src;
     }
+
+    public function getCacheStrategy($contentType) {
+        $strategies = [
+            'static' => [
+                'pages' => 'public, max-age=3600, s-maxage=7200',
+                'posts' => 'public, max-age=7200, s-maxage=14400',
+            ],
+            'dynamic' => [
+                'search' => 'no-cache, must-revalidate',
+                'user' => 'private, max-age=600',
+            ]
+        ];
+        
+        return $strategies[$contentType] ?? 'no-cache';
+    }
 }

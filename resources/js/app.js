@@ -217,5 +217,12 @@ if (document.body.classList.contains('admin-bar')) {
   }
 }
 
+// Global error tracking
+window.addEventListener('error', (e) => {
+    if (window.blitzConfig?.analytics?.trackErrors) {
+        BlockUtils.trackEvent('error', 'javascript', e.message);
+    }
+});
+
 // Export for use in other modules
 export { Alpine, BlockUtils };

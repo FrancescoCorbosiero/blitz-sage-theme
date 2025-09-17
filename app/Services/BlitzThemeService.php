@@ -154,4 +154,16 @@ class BlitzThemeService
             ],
         ];
     }
+
+    public function getOptimizedAsset($path) {
+        $manifest = $this->getManifest();
+        $asset = $manifest[$path] ?? $path;
+        
+        return [
+            'url' => asset($asset),
+            'version' => $this->getAssetsVersion(),
+            'preload' => $this->shouldPreload($path),
+            'critical' => $this->isCriticalAsset($path)
+        ];
+    }
 }
