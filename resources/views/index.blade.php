@@ -3,32 +3,15 @@
 @section('content')
 
     {{-- Hero Section --}}
-    @include('sections.hero.hero', [
-        'variant' => 'gradient',
-        'height' => 'full',
-        'overlay' => true,
-        'animated' => true
-    ])
+    @include('sections.hero.parallax')
 
-    {{-- About Section --}}
-    @include('sections.about.about', [
-        'layout' => 'split',
-        'showStats' => true,
-        'imagePosition' => 'right'
-    ])
+    @include('sections.about.timeline')
 
-    {{-- Services Section --}}
-    @include('sections.services.services', [
-        'columns' => 3,
-        'showIcons' => true,
-        'variant' => 'cards'
-    ])
+    @include('sections.contact.cards')
+    @include('sections.contact.bento-grid')
+    @include('sections.contact.alpacode')
 
-    {{-- Features Section --}}
-    @include('sections.features.features', [
-        'layout' => 'grid',
-        'columns' => 3
-    ])
+    @include('sections.pricing.pricing')
 
 @endsection
 
@@ -83,31 +66,3 @@
   }
 </style>
 
-<script>
-  document.addEventListener('alpine:init', () => {
-    Alpine.data('blogIndex', () => ({
-      posts: [],
-      
-      init() {
-        this.observePostCards();
-      },
-      
-      observePostCards() {
-        const observer = new IntersectionObserver((entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.setAttribute('data-visible', 'true');
-              observer.unobserve(entry.target);
-            }
-          });
-        }, {
-          rootMargin: '50px'
-        });
-        
-        document.querySelectorAll('.post-card').forEach(card => {
-          observer.observe(card);
-        });
-      }
-    }));
-  });
-</script>

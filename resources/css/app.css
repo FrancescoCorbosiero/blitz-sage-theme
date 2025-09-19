@@ -16,7 +16,6 @@
 @import "./dom/body.css" layer(base);
 @import "./dom/loading.css" layer(components);
 @import "./dom/scrollbar.css" layer(components);
-@import "./dom/theme-toggle.css" layer(components);
 
 /* Utility classes */
 @import "./core/utilities/forms.css" layer(utilities);

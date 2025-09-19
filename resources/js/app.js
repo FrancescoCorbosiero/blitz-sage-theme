@@ -4,8 +4,7 @@ import collapse from '@alpinejs/collapse';
 import intersect from '@alpinejs/intersect';
 
 // Core Features only
-import NavigationEnhancer from './features/navigation-enhancement.js';
-import ThemeManager from './features/theme-manager.js';
+//import NavigationEnhancer from './features/navigation-enhancement.js';
 import AccessibilityManager from './features/accessibility.js';
 
 // NO MORE ComponentRegistry!
@@ -16,8 +15,7 @@ Alpine.plugin(intersect);
 
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize features
-  window.navigationEnhancer = new NavigationEnhancer();
-  window.themeManager = new ThemeManager();
+  //window.navigationEnhancer = new NavigationEnhancer();
   window.accessibilityManager = new AccessibilityManager();
   
   // Start Alpine - it will auto-detect x-data components

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    
+
     {{-- Theme detection before any CSS --}}
     <script>
       (function() {
@@ -26,6 +26,36 @@
       html:not(.theme-loaded) { visibility: hidden; opacity: 0; }
       html.theme-loaded { visibility: visible; opacity: 1; transition: opacity 0.3s; }
     </style>
+
+    {{-- Anti-flicker for Alpine.js --}}
+    <style id="anti-flicker">
+      /* Global flicker prevention */
+      [x-cloak] { display: none !important; }
+      
+      /* Common patterns that are ALWAYS hidden initially */
+      [x-show*="false"],
+      [x-data*="open: false"] [x-show="open"],
+      [x-data*="show: false"] [x-show="show"],
+      .modal:not(.modal--open),
+      .dropdown-menu:not(.show),
+      .toast:not(.toast--visible),
+      [role="dialog"][aria-hidden="true"],
+      [data-hidden="true"] {
+        display: none !important;
+      }
+      
+      /* Alpine pending state */
+      body:not(.alpine-ready) [x-show] {
+        opacity: 0;
+      }
+    </style>
+
+    <script>
+      // Mark Alpine as ready
+      document.addEventListener('alpine:initialized', () => {
+        document.body.classList.add('alpine-ready');
+      });
+    </script>
     
     {{-- Preconnect to external domains --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -55,6 +85,7 @@
       
       {{-- Site Header --}}
       @include('sections.header.header')
+      @include('components.theme-toggle')
 
       {{-- Main Content --}}
       <main id="main" class="site-main flex-grow">
@@ -62,7 +93,7 @@
       </main>
 
       {{-- Site Footer --}}
-      @include('sections.footer.footer')
+      @include('sections.footer.full')
 
       
       

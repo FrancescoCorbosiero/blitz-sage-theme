@@ -434,6 +434,83 @@ class ThemeServiceProvider extends SageServiceProvider
             'type' => 'text',
             'description' => __('Used for Twitter Card tags', 'blitz'),
         ]);
+
+        // Header Section
+        $wp_customize->add_section('header_settings', [
+            'title' => __('Header Settings', 'blitz'),
+            'priority' => 30,
+        ]);
+
+        // Show/hide elements
+        $wp_customize->add_setting('header_show_search', ['default' => true]);
+        $wp_customize->add_control('header_show_search', [
+            'label' => __('Show Search', 'blitz'),
+            'section' => 'header_settings',
+            'type' => 'checkbox',
+        ]);
+
+        // CTA Button
+        $wp_customize->add_setting('header_cta_text', ['default' => 'Book Now']);
+        $wp_customize->add_control('header_cta_text', [
+            'label' => __('CTA Button Text', 'blitz'),
+            'section' => 'header_settings',
+            'type' => 'text',
+        ]);
+
+        $wp_customize->add_setting('header_cta_url', ['default' => '/contact']);
+        $wp_customize->add_control('header_cta_url', [
+            'label' => __('CTA Button URL', 'blitz'),
+            'section' => 'header_settings',
+            'type' => 'text',
+        ]);
+
+        // Show tagline
+        $wp_customize->add_setting('header_show_tagline', [
+            'default' => true,
+            'sanitize_callback' => 'rest_sanitize_boolean',
+        ]);
+
+        $wp_customize->add_control('header_show_tagline', [
+            'label' => __('Show Site Tagline', 'blitz'),
+            'section' => 'header_settings',
+            'type' => 'checkbox',
+        ]);
+
+        // Show CTA button
+        $wp_customize->add_setting('header_show_cta', [
+            'default' => true,
+            'sanitize_callback' => 'rest_sanitize_boolean',
+        ]);
+
+        $wp_customize->add_control('header_show_cta', [
+            'label' => __('Show CTA Button', 'blitz'),
+            'section' => 'header_settings',
+            'type' => 'checkbox',
+        ]);
+
+        // Show WhatsApp
+        $wp_customize->add_setting('header_show_whatsapp', [
+            'default' => true,
+            'sanitize_callback' => 'rest_sanitize_boolean',
+        ]);
+
+        $wp_customize->add_control('header_show_whatsapp', [
+            'label' => __('Show WhatsApp Button', 'blitz'),
+            'section' => 'header_settings',
+            'type' => 'checkbox',
+        ]);
+
+        // Footer credits
+        $wp_customize->add_setting('footer_credits', [
+            'default' => '',
+            'sanitize_callback' => 'sanitize_text_field',
+        ]);
+
+        $wp_customize->add_control('footer_credits', [
+            'label' => __('Footer Credits Text', 'blitz'),
+            'section' => 'header_settings',
+            'type' => 'text',
+        ]);
     }
 
     /**
