@@ -12,8 +12,10 @@ class Navigation extends Composer
      * @var array
      */
     protected static $views = [
-        'sections.header',
-        'sections.footer',
+        'sections.header.header',  // Add full path
+        'sections.header.*',       // Catch all header variations
+        'sections.footer.footer',
+        'sections.footer.*',
         'partials.navigation',
     ];
 

@@ -63,6 +63,16 @@ class ThemeServiceProvider extends SageServiceProvider
         
         // Register custom blocks
         $this->registerBlocks();
+
+                view()->composer(
+            [
+                'partials.widgets.navigation.menu-widget',
+                'partials.widgets.navigation.*',
+                'sections.header.*',
+                'sections.footer.*'
+            ],
+            \App\View\Composers\MenuWidget::class
+        );
     }
 
     /**

@@ -37,7 +37,7 @@
   
   /* Remove default margins */
   body, h1, h2, h3, h4, h5, h6, p, ul, ol, figure, blockquote, dl, dd {
-    margin: 0;
+    margin: 5px;
   }
   
   /* Reset list styles */
@@ -98,4 +98,8 @@
     outline: 2px solid var(--primary);
     outline-offset: 2px;
   }
+}
+
+.swiper-container {
+  contain: layout;
 }

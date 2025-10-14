@@ -1,447 +1,381 @@
-{{-- resources/views/sections/header.blade.php --}}
-{{-- Premium Header for Dog Safe Place Camp - Fixed Mobile & Spacing --}}
-
-@props([
-    'isTransparent' => false,
-    'showBookingCta' => true,
-    'currentPage' => request()->path(),
-])
-
-{{-- Spacer to prevent content overlap --}}
-<div class="header-spacer" aria-hidden="true"></div>
-
-<header 
-    x-data="{ 
-        mobileOpen: false,
-        scrolled: false,
-        dropdownOpen: false,
-        searchOpen: false,
-        init() {
-            // Handle scroll behavior
-            const handleScroll = () => {
-                this.scrolled = window.scrollY > 20;
-            };
+{{-- resources/views/sections/header/header.blade.php --}}
+@php
+    // Site information
+    $site_name = get_bloginfo('name') ?: 'Blitz Theme';
+    $tagline = get_bloginfo('description') ?: '';
+    
+    // Header settings with defaults to prevent undefined variable errors
+    $header_style = get_theme_mod('header_style', 'default');
+    $is_transparent = get_theme_mod('header_transparent', false);
+    $show_contact_btn = get_theme_mod('header_contact_button', true);
+    $contact_link = get_theme_mod('header_contact_link', '/contact');
+    $contact_text = get_theme_mod('header_contact_text', __('Get Started', 'blitz'));
+    
+    // Get navigation from composer or directly
+    $navigation_items = $primaryNavigation ?? [];
+    
+    // If no composer data, get menu directly
+    if (empty($navigation_items)) {
+        $locations = get_nav_menu_locations();
+        if (!empty($locations['primary_navigation'])) {
+            $menu_items = wp_get_nav_menu_items($locations['primary_navigation']);
+            $navigation_items = [];
             
-            window.addEventListener('scroll', handleScroll);
-            handleScroll(); // Check initial state
-            
-            // Close mobile menu on resize to desktop
-            window.addEventListener('resize', () => {
-                if (window.innerWidth >= 1024) {
-                    this.mobileOpen = false;
-                    document.body.style.overflow = '';
+            if ($menu_items) {
+                // Build parent items first
+                foreach ($menu_items as $item) {
+                    if ($item->menu_item_parent == 0) {
+                        $navigation_items[$item->ID] = [
+                            'id' => $item->ID,
+                            'title' => $item->title,
+                            'url' => $item->url,
+                            'classes' => (array) $item->classes,
+                            'active' => false,
+                            'children' => []
+                        ];
+                    }
                 }
-            });
-            
-            // Close dropdowns when clicking outside
-            document.addEventListener('click', (e) => {
-                if (!this.$el.contains(e.target)) {
-                    this.dropdownOpen = false;
-                    this.searchOpen = false;
-                }
-            });
-            
-            // Handle body scroll lock for mobile menu
-            this.$watch('mobileOpen', value => {
-                if (value) {
-                    document.body.style.overflow = 'hidden';
-                } else {
-                    document.body.style.overflow = '';
-                }
-            });
-        }
-    }"
-    :class="{ 
-        'is-scrolled': scrolled,
-        'is-transparent': {{ $isTransparent ? 'true' : 'false' }} && !scrolled 
-    }"
-    class="site-header fixed top-0 left-0 right-0 transition-all duration-500"
-    style="z-index: 9000;"
->
-    {{-- Premium glass morphism background --}}
-    <div class="header-backdrop absolute inset-0 transition-all duration-500"
-         :class="{ 'backdrop-blur-xl': scrolled || !{{ $isTransparent ? 'true' : 'false' }} }">
-    </div>
-
-    {{-- Main Container --}}
-    <div class="relative container max-w-7xl mx-auto">
-        <nav class="header-nav px-4 sm:px-6 lg:px-8 transition-all duration-500"
-             :class="{ 'py-2 sm:py-3': scrolled, 'py-3 sm:py-4 lg:py-5': !scrolled }">
-            
-            {{-- Desktop Layout --}}
-            <div class="flex items-center justify-between">
                 
-                {{-- Logo Section - Enhanced with better spacing --}}
-                <div class="flex items-center">
-                    <a href="{{ home_url('/') }}" 
-                       class="logo-link group flex items-center gap-2 sm:gap-3 lg:gap-4 transition-all duration-300"
-                       :class="{ 'scale-95': scrolled }">
-                        
-                        {{-- Logo Icon Container --}}
-                        <div class="logo-icon relative">
-                            <div class="logo-icon-bg absolute inset-0 rounded-xl sm:rounded-2xl transition-all duration-500 group-hover:scale-110"></div>
-                            <div class="relative w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 flex items-center justify-center">
-                                <img src="{{ Vite::asset('resources/images/logo-icon.svg') }}" 
-                                     alt="Dog Safe Place" 
-                                     class="w-7 h-7 sm:w-8 sm:h-8 lg:w-10 lg:h-10"
-                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                                {{-- Fallback emoji if image fails --}}
-                                <span class="text-xl sm:text-2xl lg:text-3xl hidden">🐾</span>
-                            </div>
-                        </div>
-                        
-                        {{-- Logo Text - Better typography --}}
-                        <div class="logo-text">
-                            <h1 class="text-base sm:text-lg lg:text-xl font-bold leading-tight tracking-tight">
-                                Dog Safe Place
-                            </h1>
-                            <p class="text-[10px] sm:text-xs lg:text-sm opacity-70 font-medium hidden sm:block">
-                                Milano Camp
-                            </p>
-                        </div>
-                    </a>
-                </div>
+                // Add children to parents
+                foreach ($menu_items as $item) {
+                    if ($item->menu_item_parent != 0 && isset($navigation_items[$item->menu_item_parent])) {
+                        $navigation_items[$item->menu_item_parent]['children'][] = [
+                            'id' => $item->ID,
+                            'title' => $item->title,
+                            'url' => $item->url,
+                            'classes' => (array) $item->classes,
+                            'description' => $item->description ?: '',
+                        ];
+                    }
+                }
+                
+                // Convert to indexed array
+                $navigation_items = array_values($navigation_items);
+            }
+        }
+    }
+@endphp
 
-                {{-- Center Navigation - Desktop Only --}}
-                <div class="hidden lg:flex items-center justify-center flex-1 px-8">
-                    <ul class="nav-list flex items-center gap-1">
-                        
-                        {{-- Home --}}
-                        <li>
-                            <a href="{{ home_url('/') }}" 
-                               class="nav-link {{ request()->is('/') ? 'active' : '' }}">
-                                Home
-                            </a>
-                        </li>
-                        
-                        {{-- Services Dropdown --}}
-                        <li class="relative" @click.away="dropdownOpen = false">
-                            <button @click="dropdownOpen = !dropdownOpen"
-                                    class="nav-link nav-dropdown {{ request()->is('servizi*') ? 'active' : '' }}">
-                                <span>Servizi</span>
-                                <svg class="dropdown-arrow" :class="{ 'rotate-180': dropdownOpen }" 
-                                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                                </svg>
-                            </button>
-                            
-                            {{-- Dropdown Menu --}}
-                            <div x-show="dropdownOpen"
-                                 x-transition:enter="transition ease-out duration-200"
-                                 x-transition:enter-start="opacity-0 -translate-y-2"
-                                 x-transition:enter-end="opacity-100 translate-y-0"
-                                 x-transition:leave="transition ease-in duration-150"
-                                 x-transition:leave-start="opacity-100 translate-y-0"
-                                 x-transition:leave-end="opacity-0 -translate-y-2"
-                                 class="dropdown-menu absolute top-full left-0 mt-2 w-64 rounded-2xl overflow-hidden shadow-2xl"
-                                 style="display: none;">
-                                
-                                <div class="dropdown-content">
-                                    <a href="{{ home_url('/servizi/area-privata') }}" 
-                                       class="dropdown-item group">
-                                        <span class="dropdown-icon">🏞️</span>
-                                        <div>
-                                            <div class="dropdown-title">Area Privata</div>
-                                            <div class="dropdown-desc">2000mq solo per voi</div>
-                                        </div>
-                                    </a>
-                                    
-                                    <a href="{{ home_url('/servizi/profiling') }}" 
-                                       class="dropdown-item group">
-                                        <span class="dropdown-icon">📋</span>
-                                        <div>
-                                            <div class="dropdown-title">Profiling</div>
-                                            <div class="dropdown-desc">Valutazione comportamentale</div>
-                                        </div>
-                                    </a>
-                                    
-                                    <a href="{{ home_url('/servizi/team-branco') }}" 
-                                       class="dropdown-item group">
-                                        <span class="dropdown-icon">👥</span>
-                                        <div>
-                                            <div class="dropdown-title">Team Branco</div>
-                                            <div class="dropdown-desc">Educazione professionale</div>
-                                        </div>
-                                    </a>
-                                    
-                                    <a href="{{ home_url('/servizi/abbonamenti') }}" 
-                                       class="dropdown-item group">
-                                        <span class="dropdown-icon">👑</span>
-                                        <div>
-                                            <div class="dropdown-title">Abbonamenti VIP</div>
-                                            <div class="dropdown-desc">Vantaggi esclusivi</div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                        </li>
-                        
-                        {{-- Other Nav Items --}}
-                        <li>
-                            <a href="{{ home_url('/prezzi') }}" 
-                               class="nav-link {{ request()->is('prezzi*') ? 'active' : '' }}">
-                                Prezzi
-                            </a>
-                        </li>
-                        
-                        <li>
-                            <a href="{{ home_url('/chi-siamo') }}" 
-                               class="nav-link {{ request()->is('chi-siamo*') ? 'active' : '' }}">
-                                Chi Siamo
-                            </a>
-                        </li>
-                        
-                        <li>
-                            <a href="{{ home_url('/blog') }}" 
-                               class="nav-link {{ request()->is('blog*') ? 'active' : '' }}">
-                                Blog
-                            </a>
-                        </li>
-                        
-                        <li>
-                            <a href="{{ home_url('/contatti') }}" 
-                               class="nav-link {{ request()->is('contatti*') ? 'active' : '' }}">
-                                Contatti
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+{{-- Add spacer for fixed header --}}
+<div class="header-spacer"></div>
 
-                {{-- Right Actions --}}
-                <div class="flex items-center gap-2 sm:gap-3 lg:gap-4">
-                    
-                    {{-- Search Button - Desktop Only --}}
-                    <button @click="searchOpen = !searchOpen"
-                            class="search-btn hidden lg:flex">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                        </svg>
-                    </button>
-                    
-                    {{-- WhatsApp - Desktop Only (Hidden on Mobile) --}}
-                    <a href="https://wa.me/393331234567" 
-                       target="_blank"
-                       class="whatsapp-btn hidden sm:flex">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.149-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
-                        </svg>
-                    </a>
-                    
-                    {{-- CTA Button - Desktop Only (Hidden on Mobile) --}}
-                    @if($showBookingCta)
-                    <a href="{{ home_url('/prenota') }}" 
-                       class="btn-primary hidden sm:flex">
-                        <span class="hidden sm:inline">Prenota ora</span>
-                        <span class="sm:hidden">Prenota</span>
-                        <svg class="btn-arrow hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                  d="M13 7l5 5m0 0l-5 5m5-5H6"/>
-                        </svg>
-                    </a>
+<header id="site-header" 
+        class="site-header fixed top-0 left-0 right-0 transition-all duration-300 {{ $is_transparent ? 'is-transparent' : '' }}"
+        x-data="{ 
+            scrolled: false,
+            dropdownOpen: null,
+            mobileMenuOpen: false,
+            searchOpen: false,
+            init() {
+                // Handle scroll events
+                window.addEventListener('scroll', () => {
+                    this.scrolled = window.scrollY > 50;
+                });
+                
+                // Close dropdowns on click outside
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.nav-dropdown') && !e.target.closest('.dropdown-menu')) {
+                        this.dropdownOpen = null;
+                    }
+                });
+                
+                // Close mobile menu on escape
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        this.mobileMenuOpen = false;
+                        this.dropdownOpen = null;
+                        this.searchOpen = false;
+                    }
+                });
+            }
+        }"
+        x-init="init()"
+        :class="{ 'is-scrolled': scrolled }">
+    
+    {{-- Header backdrop for glass effect --}}
+    <div class="header-backdrop absolute inset-0 backdrop-blur-lg"></div>
+    
+    <div class="container mx-auto px-4 relative">
+        <nav class="flex items-center justify-between h-16 sm:h-18 lg:h-20 transition-all duration-300">
+            
+            {{-- Logo Section --}}
+            <div class="flex items-center gap-3">
+                <a href="{{ home_url('/') }}" 
+                   class="logo-link flex items-center gap-3 group">
+                    {{-- Logo Icon/Image --}}
+                    @if(has_custom_logo())
+                        {!! get_custom_logo() !!}
+                    @else
+                        <div class="logo-icon-bg w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110">
+                            <span class="text-white font-bold text-lg sm:text-xl">
+                                {{ substr($site_name, 0, 1) }}
+                            </span>
+                        </div>
                     @endif
                     
-                    {{-- Mobile Menu Toggle - Only show on mobile/tablet --}}
-                    <button @click="mobileOpen = !mobileOpen"
-                            class="mobile-toggle flex lg:hidden"
-                            aria-label="Toggle menu"
-                            aria-expanded="false"
-                            :aria-expanded="mobileOpen.toString()">
-                        <span class="hamburger" :class="{ 'active': mobileOpen }">
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                        </span>
-                    </button>
-                </div>
+                    {{-- Site Name & Tagline --}}
+                    <div class="logo-text hidden xs:block">
+                        <h1 class="text-base sm:text-lg font-bold leading-tight">
+                            {{ $site_name }}
+                        </h1>
+                        @if($tagline && !$is_transparent)
+                            <p class="text-xs sm:text-sm opacity-70 leading-tight">
+                                {{ $tagline }}
+                            </p>
+                        @endif
+                    </div>
+                </a>
             </div>
-
-            {{-- Search Bar - Hidden by default --}}
-            <div x-show="searchOpen"
-                 x-transition:enter="transition ease-out duration-200"
-                 x-transition:enter-start="opacity-0 -translate-y-4"
-                 x-transition:enter-end="opacity-100 translate-y-0"
-                 x-transition:leave="transition ease-in duration-150"
-                 x-transition:leave-start="opacity-100 translate-y-0"
-                 x-transition:leave-end="opacity-0 -translate-y-4"
-                 class="search-bar absolute left-0 right-0 top-full mt-2 px-4 sm:px-6 lg:px-8"
-                 style="display: none;">
-                <form action="{{ home_url('/') }}" method="GET" class="search-form">
-                    <input type="search" 
-                           name="s" 
-                           placeholder="Cerca servizi, articoli..."
-                           class="search-input"
-                           @keydown.escape="searchOpen = false">
-                    <button type="submit" class="search-submit">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            
+            {{-- Desktop Navigation --}}
+            <div class="hidden lg:flex items-center gap-2">
+                @if(!empty($navigation_items))
+                    <ul class="flex items-center gap-1">
+                        @foreach($navigation_items as $item)
+                            @php
+                                $has_children = !empty($item['children']);
+                                $is_active = $item['active'] ?? false;
+                            @endphp
+                            
+                            <li @if($has_children) class="relative" @endif>
+                                @if($has_children)
+                                    <button @click="dropdownOpen = dropdownOpen === {{ $item['id'] }} ? null : {{ $item['id'] }}"
+                                            class="nav-link nav-dropdown {{ $is_active ? 'active' : '' }} flex items-center gap-1">
+                                        <span>{{ $item['title'] }}</span>
+                                        <svg class="dropdown-arrow w-4 h-4" 
+                                             :class="{ 'rotate-180': dropdownOpen === {{ $item['id'] }} }" 
+                                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                        </svg>
+                                    </button>
+                                    
+                                    {{-- Dropdown Menu --}}
+                                    <div x-show="dropdownOpen === {{ $item['id'] }}"
+                                         x-transition:enter="transition ease-out duration-200"
+                                         x-transition:enter-start="opacity-0 -translate-y-2"
+                                         x-transition:enter-end="opacity-100 translate-y-0"
+                                         x-transition:leave="transition ease-in duration-150"
+                                         x-transition:leave-start="opacity-100 translate-y-0"
+                                         x-transition:leave-end="opacity-0 -translate-y-2"
+                                         @click.away="dropdownOpen = null"
+                                         class="dropdown-menu absolute top-full left-0 mt-2 w-64 rounded-2xl overflow-hidden shadow-2xl bg-white dark:bg-gray-800"
+                                         style="z-index: 9999;"
+                                         x-cloak>
+                                        
+                                        <div class="dropdown-content p-2">
+                                            @foreach($item['children'] as $child)
+                                                <a href="{{ $child['url'] }}" 
+                                                   class="dropdown-item group block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                                    <div class="flex-1">
+                                                        <div class="dropdown-title font-medium">{{ $child['title'] }}</div>
+                                                        @if(!empty($child['description']))
+                                                            <div class="dropdown-desc text-sm text-gray-600 dark:text-gray-400">{{ $child['description'] }}</div>
+                                                        @endif
+                                                    </div>
+                                                </a>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @else
+                                    <a href="{{ $item['url'] }}" 
+                                       class="nav-link {{ $is_active ? 'active' : '' }}">
+                                        {{ $item['title'] }}
+                                    </a>
+                                @endif
+                            </li>
+                        @endforeach
+                    </ul>
+                @else
+                    {{-- Default menu if no navigation is set --}}
+                    <ul class="flex items-center gap-1">
+                        <li><a href="{{ home_url('/') }}" class="nav-link">{{ __('Home', 'blitz') }}</a></li>
+                        <li><a href="#about" class="nav-link">{{ __('About', 'blitz') }}</a></li>
+                        <li><a href="#services" class="nav-link">{{ __('Services', 'blitz') }}</a></li>
+                        <li><a href="#contact" class="nav-link">{{ __('Contact', 'blitz') }}</a></li>
+                    </ul>
+                @endif
+            </div>
+            
+            {{-- Right Section --}}
+            <div class="flex items-center gap-2 sm:gap-3">
+                {{-- Search Button --}}
+                <button @click="searchOpen = !searchOpen" 
+                        class="search-btn p-2 rounded-lg transition-all hover:scale-105">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                </button>
+                
+                {{-- Contact/CTA Button --}}
+                @if($show_contact_btn)
+                    <a href="{{ $contact_link }}" 
+                       class="btn-primary hidden sm:flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors">
+                        <span>{{ $contact_text }}</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                  d="M17 8l4 4m0 0l-4 4m4-4H3"/>
                         </svg>
-                    </button>
-                </form>
+                    </a>
+                @endif
+                
+                {{-- Mobile Menu Toggle --}}
+                <button @click="mobileMenuOpen = !mobileMenuOpen; document.body.classList.toggle('overflow-hidden')"
+                        class="mobile-toggle lg:hidden p-2 rounded-lg transition-all">
+                    <div class="hamburger w-6 h-6 relative" :class="{ 'active': mobileMenuOpen }">
+                        <span class="absolute left-0 w-full h-0.5 bg-current transition-all duration-300" 
+                              :class="mobileMenuOpen ? 'top-2.5 rotate-45' : 'top-1'"></span>
+                        <span class="absolute left-0 w-full h-0.5 bg-current transition-all duration-300 top-2.5"
+                              :class="mobileMenuOpen ? 'opacity-0' : 'opacity-100'"></span>
+                        <span class="absolute left-0 w-full h-0.5 bg-current transition-all duration-300"
+                              :class="mobileMenuOpen ? 'top-2.5 -rotate-45' : 'top-4'"></span>
+                    </div>
+                </button>
             </div>
         </nav>
     </div>
-
-    {{-- Mobile Menu Overlay - Fixed positioning --}}
-    <div x-show="mobileOpen"
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100"
-         x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-start="opacity-100"
-         x-transition:leave-end="opacity-0"
-         class="mobile-menu-overlay lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm"
-         @click="mobileOpen = false"
-         style="display: none; z-index: 9998;">
+    
+    {{-- Search Bar --}}
+    <div x-show="searchOpen"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 -translate-y-full"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100 translate-y-0"
+         x-transition:leave-end="opacity-0 -translate-y-full"
+         class="search-bar absolute top-full left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 shadow-lg"
+         x-cloak>
+        <div class="container mx-auto px-4 py-4">
+            <form action="{{ home_url('/') }}" method="get" class="flex gap-2">
+                <input type="search" 
+                       name="s" 
+                       class="search-input flex-1 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800"
+                       placeholder="{{ __('Search...', 'blitz') }}"
+                       x-ref="searchInput"
+                       @keydown.escape="searchOpen = false">
+                <button type="submit" class="btn-primary px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors">
+                    {{ __('Search', 'blitz') }}
+                </button>
+            </form>
+        </div>
     </div>
-
-    {{-- Mobile Menu Drawer - Fixed height issue --}}
-    <div x-show="mobileOpen"
+    
+    {{-- Mobile Menu Overlay --}}
+    <div x-show="mobileMenuOpen" 
+         @click="mobileMenuOpen = false"
+         class="mobile-menu-overlay fixed inset-0 bg-black/50 lg:hidden"
+         style="z-index: 99998;"
+         x-cloak>
+    </div>
+    
+    {{-- Mobile Menu --}}
+    <div x-show="mobileMenuOpen"
          x-transition:enter="transition ease-out duration-300"
          x-transition:enter-start="-translate-x-full"
          x-transition:enter-end="translate-x-0"
          x-transition:leave="transition ease-in duration-200"
          x-transition:leave-start="translate-x-0"
          x-transition:leave-end="-translate-x-full"
-         class="mobile-menu lg:hidden fixed inset-y-0 left-0 w-[85%] max-w-sm overflow-y-auto"
-         style="display: none; z-index: 9999; top: 0; bottom: 0; height: 100vh;">
+         class="mobile-menu fixed top-0 left-0 bottom-0 w-80 max-w-[85vw] bg-white dark:bg-gray-900 lg:hidden overflow-y-auto overscroll-contain"
+         style="z-index: 99999;"
+         @click.stop
+         x-cloak>
         
         {{-- Mobile Menu Header --}}
-        <div class="mobile-menu-header flex items-center justify-between p-4 sm:p-6 sticky top-0 z-10">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center">
-                    <span class="text-white text-xl">🐾</span>
+        <div class="mobile-menu-header p-4 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    @if(has_custom_logo())
+                        {!! get_custom_logo() !!}
+                    @else
+                        <div class="logo-icon-bg w-10 h-10 rounded-xl flex items-center justify-center">
+                            <span class="text-white font-bold text-lg">
+                                {{ substr($site_name, 0, 1) }}
+                            </span>
+                        </div>
+                    @endif
+                    <span class="font-bold text-lg">{{ $site_name }}</span>
                 </div>
-                <div>
-                    <div class="font-bold text-sm sm:text-base">Dog Safe Place</div>
-                    <div class="text-[10px] sm:text-xs opacity-70">Milano Camp</div>
-                </div>
-            </div>
-            <button @click="mobileOpen = false" class="mobile-close">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-            </button>
-        </div>
-
-        {{-- Mobile Menu Content --}}
-        <nav class="mobile-nav px-4 sm:px-6 pb-6">
-            <ul class="space-y-1">
-                <li>
-                    <a href="{{ home_url('/') }}" 
-                       @click="mobileOpen = false"
-                       class="mobile-nav-link {{ request()->is('/') ? 'active' : '' }}">
-                        <span class="mobile-nav-icon">🏠</span>
-                        <span>Home</span>
-                    </a>
-                </li>
-                
-                {{-- Services Accordion --}}
-                <li x-data="{ open: false }">
-                    <button @click="open = !open" class="mobile-nav-link w-full">
-                        <span class="mobile-nav-icon">🎾</span>
-                        <span>Servizi</span>
-                        <svg class="ml-auto w-5 h-5 transition-transform" :class="{ 'rotate-180': open }"
-                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                        </svg>
-                    </button>
-                    <div x-show="open" 
-                         x-transition
-                         class="mobile-submenu"
-                         style="display: none;">
-                        <a href="{{ home_url('/servizi/area-privata') }}" 
-                           @click="mobileOpen = false"
-                           class="mobile-submenu-link">
-                            Area Privata
-                        </a>
-                        <a href="{{ home_url('/servizi/profiling') }}" 
-                           @click="mobileOpen = false"
-                           class="mobile-submenu-link">
-                            Profiling Comportamentale
-                        </a>
-                        <a href="{{ home_url('/servizi/team-branco') }}" 
-                           @click="mobileOpen = false"
-                           class="mobile-submenu-link">
-                            Team Branco
-                        </a>
-                        <a href="{{ home_url('/servizi/abbonamenti') }}" 
-                           @click="mobileOpen = false"
-                           class="mobile-submenu-link">
-                            Abbonamenti VIP
-                        </a>
-                    </div>
-                </li>
-                
-                <li>
-                    <a href="{{ home_url('/prezzi') }}" 
-                       @click="mobileOpen = false"
-                       class="mobile-nav-link {{ request()->is('prezzi*') ? 'active' : '' }}">
-                        <span class="mobile-nav-icon">💰</span>
-                        <span>Prezzi</span>
-                    </a>
-                </li>
-                
-                <li>
-                    <a href="{{ home_url('/chi-siamo') }}" 
-                       @click="mobileOpen = false"
-                       class="mobile-nav-link {{ request()->is('chi-siamo*') ? 'active' : '' }}">
-                        <span class="mobile-nav-icon">👥</span>
-                        <span>Chi Siamo</span>
-                    </a>
-                </li>
-                
-                <li>
-                    <a href="{{ home_url('/blog') }}" 
-                       @click="mobileOpen = false"
-                       class="mobile-nav-link {{ request()->is('blog*') ? 'active' : '' }}">
-                        <span class="mobile-nav-icon">📝</span>
-                        <span>Blog</span>
-                    </a>
-                </li>
-                
-                <li>
-                    <a href="{{ home_url('/contatti') }}" 
-                       @click="mobileOpen = false"
-                       class="mobile-nav-link {{ request()->is('contatti*') ? 'active' : '' }}">
-                        <span class="mobile-nav-icon">📞</span>
-                        <span>Contatti</span>
-                    </a>
-                </li>
-            </ul>
-
-            {{-- Mobile CTAs --}}
-            <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700 space-y-3">
-                @if($showBookingCta)
-                <a href="{{ home_url('/prenota') }}" 
-                   @click="mobileOpen = false"
-                   class="btn-primary w-full justify-center">
-                    <span>Prenota ora</span>
-                    <span class="ml-2">🎾</span>
-                </a>
-                @endif
-                
-                <a href="https://wa.me/393331234567" 
-                   target="_blank"
-                   class="btn-secondary w-full justify-center">
-                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.149-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                <button @click="mobileMenuOpen = false" 
+                        class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
-                    <span>Chat WhatsApp</span>
-                </a>
+                </button>
             </div>
-
-            {{-- Mobile Footer Info --}}
-            <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 text-center">
-                <p class="text-xs text-gray-500 dark:text-gray-400">
-                    © 2024 Dog Safe Place Camp<br>
-                    Partnership con Team Branco
-                </p>
-            </div>
+        </div>
+        
+        {{-- Mobile Menu Content --}}
+        <nav class="p-4">
+            @if(!empty($navigation_items))
+                <ul class="space-y-2">
+                    @foreach($navigation_items as $item)
+                        @php
+                            $has_children = !empty($item['children']);
+                        @endphp
+                        
+                        <li>
+                            @if($has_children)
+                                <div x-data="{ open: false }">
+                                    <button @click="open = !open"
+                                            class="mobile-nav-link w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                                        <span>{{ $item['title'] }}</span>
+                                        <svg class="w-4 h-4 transition-transform" :class="{ 'rotate-180': open }"
+                                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                        </svg>
+                                    </button>
+                                    
+                                    <ul x-show="open" 
+                                        x-transition
+                                        class="mobile-submenu mt-2 ml-4 space-y-1">
+                                        @foreach($item['children'] as $child)
+                                            <li>
+                                                <a href="{{ $child['url'] }}" 
+                                                   class="mobile-submenu-link block p-2 pl-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                                                    {{ $child['title'] }}
+                                                </a>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @else
+                                <a href="{{ $item['url'] }}" 
+                                   class="mobile-nav-link block p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                                    {{ $item['title'] }}
+                                </a>
+                            @endif
+                        </li>
+                    @endforeach
+                </ul>
+            @endif
+            
+            {{-- Mobile CTA Button --}}
+            @if($show_contact_btn)
+                <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                    <a href="{{ $contact_link }}" 
+                       class="btn-primary w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors">
+                        <span>{{ $contact_text }}</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                        </svg>
+                    </a>
+                </div>
+            @endif
         </nav>
     </div>
 </header>
+
+{{-- Include the original styles --}}
+<style>
+/* Include all the original header styles here */
+[x-cloak] { 
+    display: none !important; 
+}
+
+/* Add other styles from the original header */
+</style>
 
 {{-- Inline Styles for the Header Component --}}
 <style>
