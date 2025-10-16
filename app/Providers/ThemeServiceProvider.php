@@ -27,6 +27,9 @@ class ThemeServiceProvider extends SageServiceProvider
         $this->app->singleton('blitz.performance', function ($app) {
             return new PerformanceService();
         });
+
+        // Register patterns
+        //new ThemePatterns();
     }
 
     /**
