@@ -213,22 +213,22 @@ export default defineConfig(({ command, mode }) => {
       proxy: {
         // Adjust this based on your local WordPress URL
         '/wp-admin': {
-          target: env.WP_HOME || 'http://localhost',
+          target: env.WP_HOME || 'http://localhost/blitz-theme',
           changeOrigin: true,
           secure: false,
         },
         '/wp-content': {
-          target: env.WP_HOME || 'http://localhost',
+          target: env.WP_HOME || 'http://localhost/blitz-theme',
           changeOrigin: true,
           secure: false,
         },
         '/wp-includes': {
-          target: env.WP_HOME || 'http://localhost',
+          target: env.WP_HOME || 'http://localhost/blitz-theme',
           changeOrigin: true,
           secure: false,
         },
         '/wp-json': {
-          target: env.WP_HOME || 'http://localhost',
+          target: env.WP_HOME || 'http://localhost/blitz-theme',
           changeOrigin: true,
           secure: false,
         },

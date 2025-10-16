@@ -11,24 +11,19 @@ class ThemeServiceProvider extends SageServiceProvider
 {
     /**
      * Register any application services.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         parent::register();
         
-        // Register theme-specific services
         $this->app->singleton('blitz.theme', function ($app) {
             return new BlitzThemeService();
         });
         
-        // Register SEO service
         $this->app->singleton('blitz.seo', function ($app) {
             return new SeoService();
         });
         
-        // Register performance service
         $this->app->singleton('blitz.performance', function ($app) {
             return new PerformanceService();
         });
@@ -36,35 +31,20 @@ class ThemeServiceProvider extends SageServiceProvider
 
     /**
      * Bootstrap any application services.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         parent::boot();
         
-        // Boot theme services
         $this->bootThemeServices();
-        
-        // Boot SEO enhancements
         $this->bootSeoEnhancements();
-        
-        // Boot performance optimizations
         $this->bootPerformanceOptimizations();
-        
-        // Boot security enhancements
         $this->bootSecurityEnhancements();
-        
-        // Boot accessibility features
         $this->bootAccessibilityFeatures();
-        
-        // Boot customizer settings
         $this->bootCustomizerSettings();
-        
-        // Register custom blocks
         $this->registerBlocks();
 
-                view()->composer(
+        view()->composer(
             [
                 'partials.widgets.navigation.menu-widget',
                 'partials.widgets.navigation.*',
@@ -78,16 +58,13 @@ class ThemeServiceProvider extends SageServiceProvider
     /**
      * Boot theme-specific services.
      */
-    protected function bootThemeServices()
+    protected function bootThemeServices(): void
     {
-        // Custom post types
         add_action('init', [$this, 'registerCustomPostTypes']);
         add_action('init', [$this, 'registerCustomTaxonomies']);
-        
-        // Admin enhancements
         add_action('admin_init', [$this, 'enhanceAdminInterface']);
+        add_action('admin_menu', [$this, 'addThemeOptionsPage']);
         
-        // Clear cache on theme switch
         add_action('after_switch_theme', function() {
             $this->app->make('blitz.theme')->clearCache();
         });
@@ -95,12 +72,12 @@ class ThemeServiceProvider extends SageServiceProvider
 
     /**
      * Boot SEO enhancements.
+     * FIXED: Uses correct method names
      */
-    protected function bootSeoEnhancements()
+    protected function bootSeoEnhancements(): void
     {
         $seoService = $this->app->make('blitz.seo');
         
-        // Only add SEO features if enabled
         add_action('wp_head', function() use ($seoService) {
             $themeService = $this->app->make('blitz.theme');
             
@@ -111,8 +88,10 @@ class ThemeServiceProvider extends SageServiceProvider
             
             if ($themeService->isFeatureEnabled('schema')) {
                 $schema = $seoService->getSchemaData();
-                if ($schema) {
-                    echo '<script type="application/ld+json">' . json_encode($schema, JSON_UNESCAPED_SLASHES) . '</script>' . "\n";
+                if ($schema && !empty($schema)) {
+                    echo '<script type="application/ld+json">' . 
+                         wp_json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) . 
+                         '</script>' . "\n";
                 }
             }
             
@@ -125,17 +104,13 @@ class ThemeServiceProvider extends SageServiceProvider
     /**
      * Boot performance optimizations.
      */
-    protected function bootPerformanceOptimizations()
+    protected function bootPerformanceOptimizations(): void
     {
         $performanceService = $this->app->make('blitz.performance');
         
-        // Optimize queries
         add_action('pre_get_posts', [$performanceService, 'optimizeQueries']);
+        add_filter('wp_lazy_loading_enabled', '__return_true');
         
-        // Remove unnecessary features
-        add_action('init', [$performanceService, 'removeUnnecessaryFeatures']);
-        
-        // Add resource hints
         add_action('wp_head', function() use ($performanceService) {
             $hints = $performanceService->getResourceHints();
             
@@ -147,614 +122,347 @@ class ThemeServiceProvider extends SageServiceProvider
                 echo '<link rel="preconnect" href="' . esc_url($url) . '" crossorigin>' . "\n";
             }
         }, 2);
-        
-        // Add speculation rules
-        add_action('wp_head', function() use ($performanceService) {
-            $rules = $performanceService->generateSpeculationRules();
-            
-            if (!empty($rules['prerender']) || !empty($rules['prefetch'])) {
-                echo '<script type="speculationrules">' . "\n";
-                echo json_encode($rules, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-                echo '</script>' . "\n";
-            }
-        }, 15);
-        
-        // Add Web Vitals tracking
-        add_action('wp_footer', function() use ($performanceService) {
-            echo '<script>' . $performanceService->getWebVitalsScript() . '</script>';
-        }, 100);
-        
-        // Optimize image attributes
-        add_filter('wp_get_attachment_image_attributes', [$performanceService, 'optimizeImageAttributes'], 10, 2);
-        
-        // Add cache headers
-        add_action('send_headers', function() use ($performanceService) {
-            if (!is_admin()) {
-                $headers = $performanceService->getCacheHeaders();
-                foreach ($headers as $key => $value) {
-                    header("{$key}: {$value}");
-                }
-            }
-        });
     }
 
     /**
      * Boot security enhancements.
      */
-    protected function bootSecurityEnhancements()
+    protected function bootSecurityEnhancements(): void
     {
-        // Add security headers
-        add_action('send_headers', function() {
-            if (!is_admin()) {
-                header('X-Content-Type-Options: nosniff');
-                header('X-Frame-Options: SAMEORIGIN');
-                header('X-XSS-Protection: 1; mode=block');
-                header('Referrer-Policy: strict-origin-when-cross-origin');
-                
-                if (is_ssl()) {
-                    header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
-                }
-            }
-        });
+        add_filter('xmlrpc_enabled', '__return_false');
+        remove_action('wp_head', 'wp_generator');
         
-        // Hide login errors
-        add_filter('login_errors', function() {
-            return __('Invalid credentials.', 'blitz');
-        });
-        
-        // Disable file editing in admin
         if (!defined('DISALLOW_FILE_EDIT')) {
             define('DISALLOW_FILE_EDIT', true);
         }
+        
+        add_filter('login_errors', function() {
+            return __('Login failed. Please try again.', 'blitz');
+        });
     }
 
     /**
      * Boot accessibility features.
      */
-    protected function bootAccessibilityFeatures()
+    protected function bootAccessibilityFeatures(): void
     {
-        // Add skip links
         add_action('wp_body_open', function() {
-            echo '<a class="skip-link screen-reader-text" href="#main">' . __('Skip to content', 'blitz') . '</a>' . "\n";
-            echo '<a class="skip-link screen-reader-text" href="#footer">' . __('Skip to footer', 'blitz') . '</a>' . "\n";
+            echo '<a href="#main-content" class="skip-link screen-reader-text">' . 
+                 __('Skip to content', 'blitz') . '</a>';
         });
-        
-        // Add ARIA attributes to menu links
-        add_filter('nav_menu_link_attributes', function($atts, $item, $args, $depth) {
-            if ($depth === 0 && in_array('menu-item-has-children', $item->classes)) {
-                $atts['aria-haspopup'] = 'true';
-                $atts['aria-expanded'] = 'false';
+    }
+
+    /**
+     * Boot customizer settings.
+     */
+    protected function bootCustomizerSettings(): void
+    {
+        add_action('customize_register', function ($wp_customize) {
+            // Theme Options
+            $wp_customize->add_section('blitz_theme_options', [
+                'title' => __('Theme Options', 'blitz'),
+                'priority' => 30,
+            ]);
+
+            $wp_customize->add_setting('default_theme', [
+                'default' => 'auto',
+                'sanitize_callback' => function ($input) {
+                    return in_array($input, ['light', 'dark', 'auto']) ? $input : 'auto';
+                },
+            ]);
+
+            $wp_customize->add_control('default_theme', [
+                'label' => __('Default Theme Mode', 'blitz'),
+                'section' => 'blitz_theme_options',
+                'type' => 'select',
+                'choices' => [
+                    'light' => __('Light', 'blitz'),
+                    'dark' => __('Dark', 'blitz'),
+                    'auto' => __('Auto', 'blitz'),
+                ],
+            ]);
+
+            $wp_customize->add_setting('show_theme_toggle', [
+                'default' => true,
+                'sanitize_callback' => 'rest_sanitize_boolean',
+            ]);
+
+            $wp_customize->add_control('show_theme_toggle', [
+                'label' => __('Show Theme Toggle Button', 'blitz'),
+                'section' => 'blitz_theme_options',
+                'type' => 'checkbox',
+            ]);
+
+            // Contact Info
+            $wp_customize->add_section('blitz_contact_info', [
+                'title' => __('Contact Information', 'blitz'),
+                'priority' => 35,
+            ]);
+
+            $contact_fields = [
+                'contact_email' => ['label' => 'Email', 'type' => 'email', 'default' => get_option('admin_email')],
+                'contact_phone' => ['label' => 'Phone', 'type' => 'text', 'default' => ''],
+                'whatsapp_number' => ['label' => 'WhatsApp', 'type' => 'text', 'default' => ''],
+                'contact_address' => ['label' => 'Address', 'type' => 'textarea', 'default' => ''],
+            ];
+
+            foreach ($contact_fields as $key => $field) {
+                $wp_customize->add_setting($key, [
+                    'default' => $field['default'],
+                    'sanitize_callback' => $field['type'] === 'email' ? 'sanitize_email' : 
+                                          ($field['type'] === 'textarea' ? 'sanitize_textarea_field' : 'sanitize_text_field'),
+                ]);
+
+                $wp_customize->add_control($key, [
+                    'label' => __($field['label'], 'blitz'),
+                    'section' => 'blitz_contact_info',
+                    'type' => $field['type'],
+                ]);
             }
-            return $atts;
-        }, 10, 4);
-    }
 
-    /**
-     * Boot customizer settings
-     */
-    protected function bootCustomizerSettings()
-    {
-        add_action('customize_register', [$this, 'registerCustomizerSettings']);
-    }
-
-    /**
-     * Register customizer settings
-     */
-    public function registerCustomizerSettings($wp_customize)
-    {
-        // Theme Options Section
-        $wp_customize->add_section('blitz_theme_options', [
-            'title' => __('Blitz Theme Options', 'blitz'),
-            'priority' => 35,
-        ]);
-        
-        // Default theme mode
-        $wp_customize->add_setting('default_theme', [
-            'default' => 'auto',
-            'sanitize_callback' => 'sanitize_text_field',
-        ]);
-        
-        $wp_customize->add_control('default_theme', [
-            'label' => __('Default Theme Mode', 'blitz'),
-            'section' => 'blitz_theme_options',
-            'type' => 'select',
-            'choices' => [
-                'auto' => __('Auto (Follow System)', 'blitz'),
-                'light' => __('Light Mode', 'blitz'),
-                'dark' => __('Dark Mode', 'blitz'),
-            ],
-        ]);
-        
-        // Show theme toggle
-        $wp_customize->add_setting('show_theme_toggle', [
-            'default' => true,
-            'sanitize_callback' => 'rest_sanitize_boolean',
-        ]);
-        
-        $wp_customize->add_control('show_theme_toggle', [
-            'label' => __('Show Theme Toggle Button', 'blitz'),
-            'section' => 'blitz_theme_options',
-            'type' => 'checkbox',
-        ]);
-        
-        // Performance Section
-        $wp_customize->add_section('blitz_performance', [
-            'title' => __('Performance', 'blitz'),
-            'priority' => 50,
-        ]);
-        
-        // Enable lazy loading
-        $wp_customize->add_setting('enable_lazy_loading', [
-            'default' => true,
-            'sanitize_callback' => 'rest_sanitize_boolean',
-        ]);
-        
-        $wp_customize->add_control('enable_lazy_loading', [
-            'label' => __('Enable Lazy Loading', 'blitz'),
-            'section' => 'blitz_performance',
-            'type' => 'checkbox',
-        ]);
-        
-        // Enable speculation rules
-        $wp_customize->add_setting('enable_speculation_rules', [
-            'default' => true,
-            'sanitize_callback' => 'rest_sanitize_boolean',
-        ]);
-        
-        $wp_customize->add_control('enable_speculation_rules', [
-            'label' => __('Enable Speculation Rules (Prefetch/Prerender)', 'blitz'),
-            'section' => 'blitz_performance',
-            'type' => 'checkbox',
-        ]);
-        
-        // Enable Web Vitals
-        $wp_customize->add_setting('enable_web_vitals', [
-            'default' => true,
-            'sanitize_callback' => 'rest_sanitize_boolean',
-        ]);
-        
-        $wp_customize->add_control('enable_web_vitals', [
-            'label' => __('Enable Web Vitals Tracking', 'blitz'),
-            'section' => 'blitz_performance',
-            'type' => 'checkbox',
-        ]);
-        
-        // SEO Section
-        $wp_customize->add_section('blitz_seo', [
-            'title' => __('SEO', 'blitz'),
-            'priority' => 55,
-        ]);
-        
-        // Enable Schema
-        $wp_customize->add_setting('enable_schema', [
-            'default' => true,
-            'sanitize_callback' => 'rest_sanitize_boolean',
-        ]);
-        
-        $wp_customize->add_control('enable_schema', [
-            'label' => __('Enable Schema.org Structured Data', 'blitz'),
-            'section' => 'blitz_seo',
-            'type' => 'checkbox',
-        ]);
-        
-        // Enable Open Graph
-        $wp_customize->add_setting('enable_open_graph', [
-            'default' => true,
-            'sanitize_callback' => 'rest_sanitize_boolean',
-        ]);
-        
-        $wp_customize->add_control('enable_open_graph', [
-            'label' => __('Enable Open Graph & Twitter Cards', 'blitz'),
-            'section' => 'blitz_seo',
-            'type' => 'checkbox',
-        ]);
-        
-        // Contact Information Section
-        $wp_customize->add_section('blitz_contact_info', [
-            'title' => __('Contact Information', 'blitz'),
-            'priority' => 40,
-        ]);
-        
-        // Phone number
-        $wp_customize->add_setting('contact_phone', [
-            'default' => '',
-            'sanitize_callback' => 'sanitize_text_field',
-        ]);
-        
-        $wp_customize->add_control('contact_phone', [
-            'label' => __('Phone Number', 'blitz'),
-            'section' => 'blitz_contact_info',
-            'type' => 'text',
-        ]);
-        
-        // WhatsApp number
-        $wp_customize->add_setting('whatsapp_number', [
-            'default' => '',
-            'sanitize_callback' => 'sanitize_text_field',
-        ]);
-        
-        $wp_customize->add_control('whatsapp_number', [
-            'label' => __('WhatsApp Number', 'blitz'),
-            'section' => 'blitz_contact_info',
-            'type' => 'text',
-            'description' => __('Include country code (e.g., +1234567890)', 'blitz'),
-        ]);
-        
-        // Email
-        $wp_customize->add_setting('contact_email', [
-            'default' => get_option('admin_email'),
-            'sanitize_callback' => 'sanitize_email',
-        ]);
-        
-        $wp_customize->add_control('contact_email', [
-            'label' => __('Contact Email', 'blitz'),
-            'section' => 'blitz_contact_info',
-            'type' => 'email',
-        ]);
-        
-        // Address
-        $wp_customize->add_setting('contact_address', [
-            'default' => '',
-            'sanitize_callback' => 'sanitize_textarea_field',
-        ]);
-        
-        $wp_customize->add_control('contact_address', [
-            'label' => __('Address', 'blitz'),
-            'section' => 'blitz_contact_info',
-            'type' => 'textarea',
-        ]);
-        
-        // Social Media Section
-        $wp_customize->add_section('blitz_social_media', [
-            'title' => __('Social Media', 'blitz'),
-            'priority' => 45,
-        ]);
-        
-        $social_platforms = [
-            'facebook' => 'Facebook',
-            'instagram' => 'Instagram',
-            'twitter' => 'Twitter',
-            'linkedin' => 'LinkedIn',
-            'youtube' => 'YouTube',
-            'tiktok' => 'TikTok',
-        ];
-        
-        foreach ($social_platforms as $platform => $label) {
-            $wp_customize->add_setting("social_{$platform}", [
-                'default' => '',
-                'sanitize_callback' => 'esc_url_raw',
+            // Social Links
+            $wp_customize->add_section('blitz_social_links', [
+                'title' => __('Social Media', 'blitz'),
+                'priority' => 40,
             ]);
-            
-            $wp_customize->add_control("social_{$platform}", [
-                'label' => __($label . ' URL', 'blitz'),
-                'section' => 'blitz_social_media',
-                'type' => 'url',
+
+            foreach (['facebook', 'twitter', 'instagram', 'linkedin', 'youtube'] as $platform) {
+                $wp_customize->add_setting("social_{$platform}", [
+                    'default' => '',
+                    'sanitize_callback' => 'esc_url_raw',
+                ]);
+
+                $wp_customize->add_control("social_{$platform}", [
+                    'label' => ucfirst($platform),
+                    'section' => 'blitz_social_links',
+                    'type' => 'url',
+                ]);
+            }
+
+            // Performance
+            $wp_customize->add_section('blitz_performance', [
+                'title' => __('Performance', 'blitz'),
+                'priority' => 50,
             ]);
-        }
-        
-        // Twitter handle for Twitter Cards
-        $wp_customize->add_setting('twitter_handle', [
-            'default' => '',
-            'sanitize_callback' => 'sanitize_text_field',
-        ]);
-        
-        $wp_customize->add_control('twitter_handle', [
-            'label' => __('Twitter Handle (without @)', 'blitz'),
-            'section' => 'blitz_social_media',
-            'type' => 'text',
-            'description' => __('Used for Twitter Card tags', 'blitz'),
-        ]);
 
-        // Header Section
-        $wp_customize->add_section('header_settings', [
-            'title' => __('Header Settings', 'blitz'),
-            'priority' => 30,
-        ]);
+            foreach ([
+                'enable_service_worker' => 'Service Worker',
+                'enable_speculation_rules' => 'Speculation Rules',
+                'enable_view_transitions' => 'View Transitions',
+                'enable_web_vitals' => 'Web Vitals',
+                'enable_lazy_loading' => 'Lazy Loading',
+            ] as $key => $label) {
+                $wp_customize->add_setting($key, [
+                    'default' => true,
+                    'sanitize_callback' => 'rest_sanitize_boolean',
+                ]);
 
-        // Show/hide elements
-        $wp_customize->add_setting('header_show_search', ['default' => true]);
-        $wp_customize->add_control('header_show_search', [
-            'label' => __('Show Search', 'blitz'),
-            'section' => 'header_settings',
-            'type' => 'checkbox',
-        ]);
+                $wp_customize->add_control($key, [
+                    'label' => __($label, 'blitz'),
+                    'section' => 'blitz_performance',
+                    'type' => 'checkbox',
+                ]);
+            }
 
-        // CTA Button
-        $wp_customize->add_setting('header_cta_text', ['default' => 'Book Now']);
-        $wp_customize->add_control('header_cta_text', [
-            'label' => __('CTA Button Text', 'blitz'),
-            'section' => 'header_settings',
-            'type' => 'text',
-        ]);
+            // SEO
+            $wp_customize->add_section('blitz_seo', [
+                'title' => __('SEO', 'blitz'),
+                'priority' => 55,
+            ]);
 
-        $wp_customize->add_setting('header_cta_url', ['default' => '/contact']);
-        $wp_customize->add_control('header_cta_url', [
-            'label' => __('CTA Button URL', 'blitz'),
-            'section' => 'header_settings',
-            'type' => 'text',
-        ]);
+            foreach ([
+                'enable_open_graph' => 'Open Graph Tags',
+                'enable_schema' => 'Schema.org Markup',
+            ] as $key => $label) {
+                $wp_customize->add_setting($key, [
+                    'default' => true,
+                    'sanitize_callback' => 'rest_sanitize_boolean',
+                ]);
 
-        // Show tagline
-        $wp_customize->add_setting('header_show_tagline', [
-            'default' => true,
-            'sanitize_callback' => 'rest_sanitize_boolean',
-        ]);
-
-        $wp_customize->add_control('header_show_tagline', [
-            'label' => __('Show Site Tagline', 'blitz'),
-            'section' => 'header_settings',
-            'type' => 'checkbox',
-        ]);
-
-        // Show CTA button
-        $wp_customize->add_setting('header_show_cta', [
-            'default' => true,
-            'sanitize_callback' => 'rest_sanitize_boolean',
-        ]);
-
-        $wp_customize->add_control('header_show_cta', [
-            'label' => __('Show CTA Button', 'blitz'),
-            'section' => 'header_settings',
-            'type' => 'checkbox',
-        ]);
-
-        // Show WhatsApp
-        $wp_customize->add_setting('header_show_whatsapp', [
-            'default' => true,
-            'sanitize_callback' => 'rest_sanitize_boolean',
-        ]);
-
-        $wp_customize->add_control('header_show_whatsapp', [
-            'label' => __('Show WhatsApp Button', 'blitz'),
-            'section' => 'header_settings',
-            'type' => 'checkbox',
-        ]);
-
-        // Footer credits
-        $wp_customize->add_setting('footer_credits', [
-            'default' => '',
-            'sanitize_callback' => 'sanitize_text_field',
-        ]);
-
-        $wp_customize->add_control('footer_credits', [
-            'label' => __('Footer Credits Text', 'blitz'),
-            'section' => 'header_settings',
-            'type' => 'text',
-        ]);
-    }
-
-    /**
-     * Register custom post types.
-     */
-    public function registerCustomPostTypes()
-    {
-        // Don't register here - moved to setup.php for proper timing
-    }
-
-    /**
-     * Register custom taxonomies.
-     */
-    public function registerCustomTaxonomies()
-    {
-        // Don't register here - moved to setup.php for proper timing
-    }
-
-    /**
-     * Enhance admin interface.
-     */
-    public function enhanceAdminInterface()
-    {
-        // Add custom admin styles
-        add_action('admin_enqueue_scripts', function() {
-            wp_enqueue_style(
-                'blitz-admin',
-                get_template_directory_uri() . '/resources/css/admin.css',
-                [],
-                wp_get_theme()->get('Version')
-            );
+                $wp_customize->add_control($key, [
+                    'label' => __($label, 'blitz'),
+                    'section' => 'blitz_seo',
+                    'type' => 'checkbox',
+                ]);
+            }
         });
-
-        // Remove unnecessary admin menu items for non-admin users
-        if (!current_user_can('administrator')) {
-            remove_menu_page('edit-comments.php');
-        }
-        
-        // Add custom metaboxes
-        add_action('add_meta_boxes', [$this, 'addCustomMetaboxes']);
-        
-        // Save metabox data
-        add_action('save_post', [$this, 'saveCustomMetaboxes']);
     }
 
     /**
-     * Add custom metaboxes
+     * Register custom post types
      */
-    public function addCustomMetaboxes()
+    public function registerCustomPostTypes(): void
     {
-        // Page options metabox
+        $types = [
+            'service' => ['icon' => 'dashicons-admin-tools', 'slug' => 'services'],
+            'portfolio' => ['icon' => 'dashicons-portfolio', 'slug' => 'portfolio'],
+            'team' => ['icon' => 'dashicons-groups', 'slug' => 'team'],
+            'testimonial' => ['icon' => 'dashicons-testimonial', 'slug' => 'testimonials'],
+            'faq' => ['icon' => 'dashicons-editor-help', 'slug' => 'faq'],
+        ];
+
+        foreach ($types as $key => $config) {
+            register_post_type($key, [
+                'labels' => [
+                    'name' => __(ucfirst($key) . 's', 'blitz'),
+                    'singular_name' => __(ucfirst($key), 'blitz'),
+                ],
+                'public' => true,
+                'has_archive' => true,
+                'show_in_rest' => true,
+                'supports' => ['title', 'editor', 'thumbnail', 'excerpt'],
+                'menu_icon' => $config['icon'],
+                'rewrite' => ['slug' => $config['slug']],
+            ]);
+        }
+    }
+
+    /**
+     * Register custom taxonomies
+     */
+    public function registerCustomTaxonomies(): void
+    {
+        foreach (['service', 'portfolio'] as $type) {
+            register_taxonomy("{$type}_category", $type, [
+                'labels' => [
+                    'name' => __(ucfirst($type) . ' Categories', 'blitz'),
+                    'singular_name' => __(ucfirst($type) . ' Category', 'blitz'),
+                ],
+                'hierarchical' => true,
+                'show_in_rest' => true,
+                'rewrite' => ['slug' => "{$type}-category"],
+            ]);
+        }
+    }
+
+    /**
+     * Enhance admin interface
+     */
+    public function enhanceAdminInterface(): void
+    {
+        add_action('add_meta_boxes', [$this, 'addPageOptionsMetabox']);
+        add_action('save_post', [$this, 'savePageOptionsMetabox']);
+    }
+
+    /**
+     * Add page options metabox
+     */
+    public function addPageOptionsMetabox(): void
+    {
         add_meta_box(
-            'page_options',
+            'blitz_page_options',
             __('Page Options', 'blitz'),
             [$this, 'renderPageOptionsMetabox'],
             ['page', 'post'],
-            'side',
-            'default'
-        );
-        
-        // SEO metabox
-        add_meta_box(
-            'seo_options',
-            __('SEO Options', 'blitz'),
-            [$this, 'renderSeoMetabox'],
-            ['page', 'post', 'service', 'portfolio'],
-            'normal',
-            'high'
+            'side'
         );
     }
 
     /**
      * Render page options metabox
      */
-    public function renderPageOptionsMetabox($post)
+    public function renderPageOptionsMetabox($post): void
     {
-        wp_nonce_field('page_options_nonce', 'page_options_nonce');
+        wp_nonce_field('blitz_page_options', 'blitz_page_options_nonce');
         
-        $show_toc = get_post_meta($post->ID, '_show_table_of_contents', true);
-        $enable_sharing = get_post_meta($post->ID, '_enable_page_sharing', true);
-        $show_bottom_cta = get_post_meta($post->ID, '_show_bottom_cta', true);
+        $options = [
+            'hide_page_title' => __('Hide Title', 'blitz'),
+            'hide_breadcrumbs' => __('Hide Breadcrumbs', 'blitz'),
+            'enable_page_sharing' => __('Enable Sharing', 'blitz'),
+            'show_bottom_cta' => __('Show Bottom CTA', 'blitz'),
+        ];
+
+        foreach ($options as $key => $label) {
+            $value = get_post_meta($post->ID, "_{$key}", true);
+            echo '<p><label>';
+            echo '<input type="checkbox" name="' . esc_attr($key) . '" value="1" ' . checked($value, '1', false) . '>';
+            echo ' ' . esc_html($label);
+            echo '</label></p>';
+        }
+    }
+
+    /**
+     * Save page options metabox
+     */
+    public function savePageOptionsMetabox($post_id): void
+    {
+        if (!isset($_POST['blitz_page_options_nonce']) || 
+            !wp_verify_nonce($_POST['blitz_page_options_nonce'], 'blitz_page_options') ||
+            (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) ||
+            !current_user_can('edit_post', $post_id)) {
+            return;
+        }
+
+        foreach (['hide_page_title', 'hide_breadcrumbs', 'enable_page_sharing', 'show_bottom_cta'] as $key) {
+            update_post_meta($post_id, "_{$key}", isset($_POST[$key]) ? '1' : '0');
+        }
+    }
+
+    /**
+     * Add theme options page
+     */
+    public function addThemeOptionsPage(): void
+    {
+        add_theme_page(
+            __('Blitz Options', 'blitz'),
+            __('Blitz Options', 'blitz'),
+            'manage_options',
+            'blitz-theme',
+            [$this, 'renderThemeOptionsPage']
+        );
+    }
+
+    /**
+     * Render theme options page
+     */
+    public function renderThemeOptionsPage(): void
+    {
         ?>
-        <div class="page-options-metabox">
-            <p>
-                <label>
-                    <input type="checkbox" name="show_table_of_contents" value="1" <?php checked($show_toc, '1'); ?>>
-                    <?php _e('Show Table of Contents', 'blitz'); ?>
-                </label>
-            </p>
-            <p>
-                <label>
-                    <input type="checkbox" name="enable_page_sharing" value="1" <?php checked($enable_sharing, '1'); ?>>
-                    <?php _e('Enable Page Sharing', 'blitz'); ?>
-                </label>
-            </p>
-            <p>
-                <label>
-                    <input type="checkbox" name="show_bottom_cta" value="1" <?php checked($show_bottom_cta, '1'); ?>>
-                    <?php _e('Show Bottom CTA', 'blitz'); ?>
-                </label>
-            </p>
+        <div class="wrap">
+            <h1><?php _e('Blitz Theme Options', 'blitz'); ?></h1>
+            <p><?php _e('Configure settings via Appearance > Customize', 'blitz'); ?></p>
+            
+            <div class="card" style="max-width: 800px; padding: 20px; margin-top: 20px;">
+                <h2><?php _e('Quick Links', 'blitz'); ?></h2>
+                <ul>
+                    <li><a href="<?php echo admin_url('customize.php?autofocus[section]=blitz_theme_options'); ?>">Theme Options</a></li>
+                    <li><a href="<?php echo admin_url('customize.php?autofocus[section]=blitz_contact_info'); ?>">Contact Info</a></li>
+                    <li><a href="<?php echo admin_url('customize.php?autofocus[section]=blitz_social_links'); ?>">Social Links</a></li>
+                    <li><a href="<?php echo admin_url('customize.php?autofocus[section]=blitz_performance'); ?>">Performance</a></li>
+                    <li><a href="<?php echo admin_url('customize.php?autofocus[section]=blitz_seo'); ?>">SEO</a></li>
+                </ul>
+            </div>
+
+            <div class="card" style="max-width: 800px; padding: 20px; margin-top: 20px;">
+                <h2><?php _e('Theme Info', 'blitz'); ?></h2>
+                <p><strong>Version:</strong> 1.0.0</p>
+                <p><strong>Framework:</strong> Sage 10</p>
+                <p><a href="https://github.com/FrancescoCorbosiero/blitz-sage-theme" target="_blank">Documentation</a></p>
+            </div>
         </div>
         <?php
     }
 
     /**
-     * Render SEO metabox
+     * Auto-register blade components
      */
-    public function renderSeoMetabox($post)
+    protected function registerBlocks(): void
     {
-        wp_nonce_field('seo_options_nonce', 'seo_options_nonce');
+        $path = resource_path('views/sections');
         
-        $meta_description = get_post_meta($post->ID, '_meta_description', true);
-        $og_image = get_post_meta($post->ID, '_og_image', true);
-        ?>
-        <div class="seo-options-metabox">
-            <p>
-                <label for="meta_description">
-                    <?php _e('Meta Description', 'blitz'); ?>
-                </label>
-                <textarea 
-                    id="meta_description" 
-                    name="meta_description" 
-                    rows="3" 
-                    style="width: 100%;"
-                    placeholder="<?php _e('Leave blank to auto-generate from content', 'blitz'); ?>"
-                ><?php echo esc_textarea($meta_description); ?></textarea>
-                <span class="description">
-                    <?php _e('Recommended: 150-160 characters', 'blitz'); ?>
-                </span>
-            </p>
-            <p>
-                <label for="og_image">
-                    <?php _e('Open Graph Image URL', 'blitz'); ?>
-                </label>
-                <input 
-                    type="url" 
-                    id="og_image" 
-                    name="og_image" 
-                    value="<?php echo esc_url($og_image); ?>" 
-                    style="width: 100%;"
-                    placeholder="<?php _e('Leave blank to use featured image', 'blitz'); ?>"
-                >
-                <span class="description">
-                    <?php _e('Recommended size: 1200x630 pixels', 'blitz'); ?>
-                </span>
-            </p>
-        </div>
-        <?php
-    }
-
-    /**
-     * Save custom metabox data
-     */
-    public function saveCustomMetaboxes($post_id)
-    {
-        // Check nonces
-        $nonces = ['page_options_nonce', 'seo_options_nonce'];
-        $valid_nonce = false;
+        if (!is_dir($path)) return;
         
-        foreach ($nonces as $nonce) {
-            if (isset($_POST[$nonce]) && wp_verify_nonce($_POST[$nonce], $nonce)) {
-                $valid_nonce = true;
-                break;
-            }
-        }
-        
-        if (!$valid_nonce) {
-            return;
-        }
-        
-        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
-            return;
-        }
-        
-        if (!current_user_can('edit_post', $post_id)) {
-            return;
-        }
-        
-        // Save page options
-        if (isset($_POST['page_options_nonce'])) {
-            update_post_meta($post_id, '_show_table_of_contents', 
-                isset($_POST['show_table_of_contents']) ? '1' : '0');
-            update_post_meta($post_id, '_enable_page_sharing', 
-                isset($_POST['enable_page_sharing']) ? '1' : '0');
-            update_post_meta($post_id, '_show_bottom_cta', 
-                isset($_POST['show_bottom_cta']) ? '1' : '0');
-        }
-        
-        // Save SEO options
-        if (isset($_POST['seo_options_nonce'])) {
-            if (isset($_POST['meta_description'])) {
-                update_post_meta($post_id, '_meta_description', 
-                    sanitize_textarea_field($_POST['meta_description']));
-            }
-            if (isset($_POST['og_image'])) {
-                update_post_meta($post_id, '_og_image', 
-                    esc_url_raw($_POST['og_image']));
-            }
-        }
-    }
-
-    /**
-     * Auto-register all blade components in the sections directory
-     */
-    protected function registerBlocks()
-    {
-        $sectionsPath = resource_path('views/sections');
-        
-        if (!is_dir($sectionsPath)) {
-            return;
-        }
-        
-        // Scan the sections directory
         $iterator = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($sectionsPath)
+            new \RecursiveDirectoryIterator($path, \RecursiveDirectoryIterator::SKIP_DOTS)
         );
         
         foreach ($iterator as $file) {
             if ($file->isFile() && $file->getExtension() === 'php') {
-                // Get the relative path from the sections folder
-                $relativePath = str_replace(
-                    [$sectionsPath . DIRECTORY_SEPARATOR, '.blade.php', DIRECTORY_SEPARATOR],
-                    ['', '', '.'],
-                    $file->getPathname()
-                );
+                $relative = str_replace([$path . DIRECTORY_SEPARATOR, '.blade.php'], '', $file->getPathname());
+                $component = str_replace(DIRECTORY_SEPARATOR, '.', $relative);
                 
-                // Convert to component name
-                $componentName = basename($relativePath, '.blade');
-                $viewPath = 'sections.' . str_replace('/', '.', dirname($relativePath)) . '.' . $componentName;
-                
-                // Register the component
                 if (function_exists('\Blade')) {
-                    \Blade::component($viewPath, 'sections.' . $componentName);
+                    \Blade::component('sections.' . $component, 'sections.' . basename($component));
                 }
             }
         }

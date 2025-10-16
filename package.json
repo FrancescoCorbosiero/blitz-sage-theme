@@ -30,7 +30,9 @@
     "translate:js": "wp i18n make-json ./resources/lang --pretty-print",
     "translate:mo": "wp i18n make-mo ./resources/lang ./resources/lang",
     "test": "echo \"No tests specified\" && exit 0",
-    "postinstall": "npm run build"
+    "postinstall": "npm run build",
+    "icons": "./scripts/generate-pwa-icons.sh",
+    "optimize": "./scripts/optimize-images.sh"
   },
   "devDependencies": {
     "@roots/vite-plugin": "^1.0.2",
