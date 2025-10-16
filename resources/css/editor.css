@@ -1,1 +1,860 @@
 @import "tailwindcss";
+@import "tailwindcss";
+
+/* ============================================
+   BLITZ THEME - GUTENBERG EDITOR STYLES
+   Enhanced editor experience with complete
+   block styling and custom configurations
+   ============================================ */
+
+/* -------------------------------------------
+   CUSTOM FORMAT TYPES
+   ------------------------------------------- */
+.blitz-highlight {
+  background: linear-gradient(120deg, rgba(255, 237, 74, 0.4) 0%, rgba(255, 237, 74, 0.6) 100%);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.blitz-small {
+  font-size: 0.875em;
+  opacity: 0.9;
+}
+
+/* -------------------------------------------
+   BUTTON BLOCK STYLES
+   ------------------------------------------- */
+.is-style-blitz-primary .wp-block-button__link {
+  background: var(--primary, #1a3d0a);
+  color: white;
+  border: none;
+  padding: 0.875rem 2rem;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.is-style-blitz-primary .wp-block-button__link:hover {
+  background: var(--primary-dark, #0f2506);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(26, 61, 10, 0.3);
+}
+
+.is-style-blitz-secondary .wp-block-button__link {
+  background: var(--accent, #f97316);
+  color: white;
+  border: none;
+  padding: 0.875rem 2rem;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.is-style-blitz-secondary .wp-block-button__link:hover {
+  background: var(--accent-dark, #ea580c);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(249, 115, 22, 0.3);
+}
+
+.is-style-blitz-outline .wp-block-button__link {
+  background: transparent;
+  color: var(--primary, #1a3d0a);
+  border: 2px solid var(--primary, #1a3d0a);
+  padding: 0.875rem 2rem;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.is-style-blitz-outline .wp-block-button__link:hover {
+  background: var(--primary, #1a3d0a);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(26, 61, 10, 0.2);
+}
+
+.is-style-blitz-ghost .wp-block-button__link {
+  background: transparent;
+  color: var(--primary, #1a3d0a);
+  border: 1px solid transparent;
+  padding: 0.875rem 2rem;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.is-style-blitz-ghost .wp-block-button__link:hover {
+  border-color: var(--primary, #1a3d0a);
+  background: rgba(26, 61, 10, 0.05);
+}
+
+/* -------------------------------------------
+   LIST BLOCK STYLES
+   ------------------------------------------- */
+.is-style-blitz-checklist {
+  list-style: none;
+  padding-left: 0;
+}
+
+.is-style-blitz-checklist li {
+  position: relative;
+  padding-left: 32px;
+  margin-bottom: 12px;
+}
+
+.is-style-blitz-checklist li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--primary, #1a3d0a);
+  font-weight: bold;
+  font-size: 1.2em;
+  background: rgba(26, 61, 10, 0.1);
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.is-style-blitz-icons {
+  list-style: none;
+  padding-left: 0;
+}
+
+.is-style-blitz-icons li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.is-style-blitz-icons li::before {
+  content: "→";
+  color: var(--primary, #1a3d0a);
+  font-weight: bold;
+  font-size: 1.3em;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* -------------------------------------------
+   HEADING BLOCK STYLES
+   ------------------------------------------- */
+.is-style-blitz-gradient {
+  background: linear-gradient(135deg, var(--primary, #1a3d0a) 0%, var(--accent, #f97316) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 800;
+}
+
+.is-style-blitz-underline {
+  position: relative;
+  padding-bottom: 16px;
+  display: inline-block;
+}
+
+.is-style-blitz-underline::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary, #1a3d0a), var(--accent, #f97316));
+  border-radius: 2px;
+}
+
+/* -------------------------------------------
+   GROUP/CONTAINER BLOCK STYLES
+   ------------------------------------------- */
+.is-style-blitz-section {
+  padding: 4rem 2rem;
+  margin: 2rem 0;
+}
+
+.is-style-blitz-card {
+  padding: 2rem;
+  background: var(--bg-secondary, #f8f8f8);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.is-style-blitz-card-hover {
+    padding: 2rem;
+  background: var(--bg-secondary, #f8f8f8);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.is-style-blitz-card-hover:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+  border-color: var(--primary, #1a3d0a);
+}
+
+.is-style-blitz-card-glass {
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+/* -------------------------------------------
+   COLUMNS BLOCK STYLES
+   ------------------------------------------- */
+.is-style-blitz-equal-height > .wp-block-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.is-style-blitz-equal-height > .wp-block-column > * {
+  flex-grow: 1;
+}
+
+.is-style-blitz-gap-large {
+  gap: 3rem !important;
+}
+
+.is-style-blitz-gap-small {
+  gap: 1rem !important;
+}
+
+.is-style-blitz-stacked-mobile .wp-block-column {
+  flex-basis: 100% !important;
+}
+
+@media (min-width: 782px) {
+  .is-style-blitz-stacked-mobile .wp-block-column {
+    flex-basis: calc(50% - 1rem) !important;
+  }
+}
+
+/* -------------------------------------------
+   IMAGE BLOCK STYLES
+   ------------------------------------------- */
+.is-style-blitz-rounded img {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.is-style-blitz-shadow {
+  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.12));
+}
+
+.is-style-blitz-shadow img {
+  border-radius: 8px;
+}
+
+.is-style-blitz-zoom-hover {
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.is-style-blitz-zoom-hover img {
+  transition: transform 0.4s ease, filter 0.4s ease;
+}
+
+.is-style-blitz-zoom-hover:hover img {
+  transform: scale(1.08);
+  filter: brightness(1.1);
+}
+
+.is-style-blitz-bordered img {
+  border: 4px solid var(--primary, #1a3d0a);
+  padding: 8px;
+  background: white;
+  border-radius: 8px;
+}
+
+.is-style-blitz-polaroid {
+  background: white;
+  padding: 12px 12px 48px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: inline-block;
+  transform: rotate(-2deg);
+  transition: transform 0.3s ease;
+}
+
+.is-style-blitz-polaroid:hover {
+  transform: rotate(0deg) scale(1.02);
+}
+
+.is-style-blitz-polaroid img {
+  border-radius: 0;
+}
+
+/* -------------------------------------------
+   QUOTE BLOCK STYLES
+   ------------------------------------------- */
+.is-style-blitz-testimonial {
+  border-left: 4px solid var(--primary, #1a3d0a);
+  padding: 1.5rem 1.5rem 1.5rem 2rem;
+  background: var(--bg-secondary, #f8f8f8);
+  border-radius: 8px;
+  font-style: italic;
+  position: relative;
+}
+
+.is-style-blitz-testimonial::before {
+  content: '"';
+  position: absolute;
+  top: -10px;
+  left: 20px;
+  font-size: 4rem;
+  color: var(--primary, #1a3d0a);
+  opacity: 0.2;
+  font-family: Georgia, serif;
+  line-height: 1;
+}
+
+.is-style-blitz-testimonial cite {
+  display: block;
+  margin-top: 1rem;
+  font-weight: 600;
+  color: var(--primary, #1a3d0a);
+  font-style: normal;
+}
+
+.is-style-blitz-large {
+  font-size: 1.5rem;
+  line-height: 1.6;
+  font-weight: 300;
+  padding: 2rem;
+  border-left: 6px solid var(--accent, #f97316);
+}
+
+.is-style-blitz-callout {
+  background: linear-gradient(135deg, rgba(26, 61, 10, 0.05), rgba(249, 115, 22, 0.05));
+  border: 2px solid var(--primary, #1a3d0a);
+  border-radius: 12px;
+  padding: 2rem;
+  font-weight: 500;
+}
+
+/* -------------------------------------------
+   SEPARATOR BLOCK STYLES
+   ------------------------------------------- */
+.is-style-blitz-gradient.wp-block-separator {
+  background: linear-gradient(to right, transparent, var(--primary, #1a3d0a), transparent);
+  height: 2px;
+  border: none;
+  opacity: 1;
+}
+
+.is-style-blitz-dots.wp-block-separator {
+  background: none;
+  border: none;
+  height: 20px;
+  position: relative;
+  text-align: center;
+}
+
+.is-style-blitz-dots.wp-block-separator::before {
+  content: '• • •';
+  font-size: 24px;
+  color: var(--primary, #1a3d0a);
+  letter-spacing: 12px;
+}
+
+.is-style-blitz-dashed.wp-block-separator {
+  border: none;
+  border-top: 3px dashed var(--primary, #1a3d0a);
+  background: none;
+  height: 0;
+}
+
+.is-style-blitz-wave.wp-block-separator {
+  border: none;
+  height: 20px;
+  background: none;
+  position: relative;
+  overflow: visible;
+}
+
+.is-style-blitz-wave.wp-block-separator::before {
+  content: '〰';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2rem;
+  color: var(--primary, #1a3d0a);
+}
+
+/* -------------------------------------------
+   TABLE BLOCK STYLES
+   ------------------------------------------- */
+.is-style-blitz-striped tbody tr:nth-child(even) {
+  background: rgba(26, 61, 10, 0.03);
+}
+
+.is-style-blitz-striped th {
+  background: var(--primary, #1a3d0a);
+  color: white;
+  padding: 12px;
+  font-weight: 600;
+}
+
+.is-style-blitz-bordered {
+  border: 2px solid var(--primary, #1a3d0a);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.is-style-blitz-bordered th,
+.is-style-blitz-bordered td {
+  border: 1px solid rgba(26, 61, 10, 0.2);
+  padding: 12px;
+}
+
+.is-style-blitz-hover tbody tr {
+  transition: background 0.2s ease;
+}
+
+.is-style-blitz-hover tbody tr:hover {
+  background: rgba(249, 115, 22, 0.08);
+}
+
+.is-style-blitz-minimal {
+  border: none;
+  border-collapse: collapse;
+}
+
+.is-style-blitz-minimal th {
+  border-bottom: 3px solid var(--primary, #1a3d0a);
+  padding: 12px 8px;
+  text-align: left;
+}
+
+.is-style-blitz-minimal td {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 12px 8px;
+}
+
+/* -------------------------------------------
+   MEDIA & TEXT BLOCK STYLES
+   ------------------------------------------- */
+.is-style-blitz-overlap .wp-block-media-text__media {
+  position: relative;
+  z-index: 2;
+}
+
+.is-style-blitz-overlap .wp-block-media-text__content {
+  position: relative;
+  margin-left: -40px;
+  background: white;
+  padding: 2rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  z-index: 1;
+}
+
+.is-style-blitz-split-color {
+  background: linear-gradient(90deg, var(--bg-secondary, #f8f8f8) 50%, white 50%);
+}
+
+/* -------------------------------------------
+   COVER BLOCK STYLES
+   ------------------------------------------- */
+.is-style-blitz-gradient-overlay.wp-block-cover {
+  background: linear-gradient(135deg, var(--primary, #1a3d0a), var(--accent, #f97316));
+}
+
+.is-style-blitz-blur-overlay .wp-block-cover__background {
+  backdrop-filter: blur(8px);
+  background: rgba(26, 61, 10, 0.7);
+}
+
+/* -------------------------------------------
+   PARAGRAPH BLOCK STYLES
+   ------------------------------------------- */
+.is-style-blitz-lead {
+  font-size: 1.25rem;
+  line-height: 1.7;
+  color: rgba(0, 0, 0, 0.8);
+  font-weight: 400;
+}
+
+.is-style-blitz-dropcap::first-letter {
+  float: left;
+  font-size: 4rem;
+  line-height: 0.8;
+  margin: 0.1em 0.1em 0 0;
+  color: var(--primary, #1a3d0a);
+  font-weight: 700;
+}
+
+.is-style-blitz-highlight-box {
+  background: rgba(249, 115, 22, 0.1);
+  border-left: 4px solid var(--accent, #f97316);
+  padding: 1rem 1.5rem;
+  border-radius: 4px;
+  margin: 1.5rem 0;
+}
+
+/* -------------------------------------------
+   CUSTOM BLOCK PATTERNS
+   ------------------------------------------- */
+.blitz-cta-block {
+  padding: 4rem 2rem;
+  border-radius: 16px;
+  text-align: center;
+  background: linear-gradient(135deg, var(--primary, #1a3d0a), var(--primary-dark, #0f2506));
+  color: white;
+  box-shadow: 0 12px 40px rgba(26, 61, 10, 0.3);
+}
+
+.blitz-cta-block h2,
+.blitz-cta-block p {
+  color: white;
+}
+
+.blitz-features-grid {
+  gap: 2rem;
+}
+
+.blitz-features-grid .wp-block-column {
+  text-align: center;
+  padding: 2rem;
+  background: var(--bg-secondary, #f8f8f8);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.blitz-features-grid .wp-block-column:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+}
+
+.blitz-testimonial-pattern {
+  padding: 3rem 2rem;
+  background: var(--bg-secondary, #f8f8f8);
+  border-radius: 16px;
+}
+
+.blitz-pricing-grid {
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.blitz-pricing-grid .pricing-card {
+  background: white;
+  border: 2px solid rgba(26, 61, 10, 0.1);
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.blitz-pricing-grid .pricing-card:hover {
+  border-color: var(--primary, #1a3d0a);
+  transform: scale(1.03);
+  box-shadow: 0 12px 40px rgba(26, 61, 10, 0.15);
+}
+
+.blitz-pricing-grid .price {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--primary, #1a3d0a);
+  margin: 1rem 0;
+}
+
+.blitz-stats-grid {
+  gap: 2rem;
+  text-align: center;
+  padding: 3rem 0;
+}
+
+.blitz-stats-grid .wp-block-column {
+  padding: 2rem;
+}
+
+.blitz-stats-grid h2 {
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: var(--primary, #1a3d0a);
+  margin-bottom: 0.5rem;
+  line-height: 1;
+}
+
+.blitz-stats-grid p {
+  font-size: 1.1rem;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+/* -------------------------------------------
+   ANIMATION CLASSES
+   ------------------------------------------- */
+.animate-fade-in {
+  animation: blitzFadeIn 0.6s ease-out;
+}
+
+.animate-slide-up {
+  animation: blitzSlideUp 0.6s ease-out;
+}
+
+.animate-zoom-in {
+  animation: blitzZoomIn 0.6s ease-out;
+}
+
+.animate-rotate {
+  animation: blitzRotate 0.6s ease-out;
+}
+
+.animate-slide-left {
+  animation: blitzSlideLeft 0.6s ease-out;
+}
+
+.animate-slide-right {
+  animation: blitzSlideRight 0.6s ease-out;
+}
+
+@keyframes blitzFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes blitzSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes blitzZoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes blitzRotate {
+  from {
+    opacity: 0;
+    transform: rotate(-5deg);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(0);
+  }
+}
+
+@keyframes blitzSlideLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes blitzSlideRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* -------------------------------------------
+   UTILITY CLASSES
+   ------------------------------------------- */
+.has-shadow {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.has-shadow-large {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.has-rounded-corners {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.has-rounded-corners-large {
+  border-radius: 24px;
+  overflow: hidden;
+}
+
+.has-border-primary {
+  border: 2px solid var(--primary, #1a3d0a);
+}
+
+.has-border-accent {
+  border: 2px solid var(--accent, #f97316);
+}
+
+.has-background-gradient {
+  background: linear-gradient(135deg, var(--primary, #1a3d0a), var(--accent, #f97316));
+}
+
+/* -------------------------------------------
+   SPACING HELPERS
+   ------------------------------------------- */
+.p-0 { padding: 0 !important; }
+.p-4 { padding: 1rem !important; }
+.p-8 { padding: 2rem !important; }
+.p-12 { padding: 3rem !important; }
+.p-16 { padding: 4rem !important; }
+
+.m-0 { margin: 0 !important; }
+.m-4 { margin: 1rem !important; }
+.m-8 { margin: 2rem !important; }
+.m-12 { margin: 3rem !important; }
+.m-16 { margin: 4rem !important; }
+
+/* -------------------------------------------
+   RESPONSIVE HELPERS
+   ------------------------------------------- */
+@media (max-width: 782px) {
+  .blitz-cta-block {
+    padding: 2rem 1rem;
+  }
+  
+  .blitz-pricing-grid .pricing-card {
+    margin-bottom: 1rem;
+  }
+  
+  .blitz-stats-grid h2 {
+    font-size: 2.5rem;
+  }
+  
+  .is-style-blitz-overlap .wp-block-media-text__content {
+    margin-left: 0;
+    margin-top: -40px;
+  }
+}
+
+/* -------------------------------------------
+   BLOCK EDITOR SPECIFIC ENHANCEMENTS
+   ------------------------------------------- */
+.editor-styles-wrapper {
+  font-family: var(--font-body, system-ui, -apple-system, sans-serif);
+  color: var(--text-primary, #1a1a1a);
+}
+
+.editor-styles-wrapper .block-editor-block-list__block {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.editor-styles-wrapper .wp-block {
+  max-width: 800px;
+}
+
+.editor-styles-wrapper .wp-block[data-align="wide"] {
+  max-width: 1200px;
+}
+
+.editor-styles-wrapper .wp-block[data-align="full"] {
+  max-width: none;
+}
+
+/* -------------------------------------------
+   ACCESSIBILITY ENHANCEMENTS
+   ------------------------------------------- */
+.wp-block-button__link:focus,
+.wp-block a:focus {
+  outline: 3px solid var(--accent, #f97316);
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .is-style-blitz-card {
+    border: 2px solid currentColor;
+  }
+  
+  .is-style-blitz-gradient {
+    -webkit-text-fill-color: currentColor;
+    background: none;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* -------------------------------------------
+   DARK MODE EDITOR SUPPORT
+   ------------------------------------------- */
+@media (prefers-color-scheme: dark) {
+  .editor-styles-wrapper {
+    --bg-secondary: #2a2a2a;
+    color: #e0e0e0;
+  }
+  
+  .is-style-blitz-card,
+  .is-style-blitz-card-hover {
+    background: #2a2a2a;
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .blitz-testimonial-pattern {
+    background: #2a2a2a;
+  }
+  
+  .is-style-blitz-testimonial {
+    background: #2a2a2a;
+  }
+}
+
+/* -------------------------------------------
+   BLOCK INSERTER PREVIEWS
+   ------------------------------------------- */
+.block-editor-inserter__preview-content .is-style-blitz-card {
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.block-editor-inserter__preview-content .blitz-cta-block {
+  min-height: 300px;
+}
+
+/* -------------------------------------------
+   CUSTOM BLOCK TOOLBAR STYLES
+   ------------------------------------------- */
+.block-editor-block-toolbar .components-toolbar-group {
+  border-color: var(--primary, #1a3d0a);
+}
+
+.block-editor-block-toolbar .components-button.is-pressed {
+  background: var(--primary, #1a3d0a);
+  color: white;
+}
