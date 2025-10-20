@@ -344,3 +344,4 @@ class App extends Composer
             'theme_optimized' => true,
         ];
     }
+}

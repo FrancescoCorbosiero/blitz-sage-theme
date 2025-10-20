@@ -1,0 +1,209 @@
+/* ============================================
+   BLITZ THEME - PATTERN STYLES
+   ============================================ */
+
+/* FAQ Patterns */
+.blitz-faq-item {
+  background: var(--bg-secondary, #f8f8f8);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.blitz-faq-item:hover {
+  border-color: var(--primary, #1a3d0a);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.blitz-faq-item summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--text-primary, #1a1a1a);
+  padding: 0.5rem;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.blitz-faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.blitz-faq-item summary::after {
+  content: '+';
+  font-size: 1.5rem;
+  color: var(--primary, #1a3d0a);
+  font-weight: bold;
+  transition: transform 0.3s ease;
+}
+
+.blitz-faq-item[open] summary::after {
+  content: '−';
+  transform: rotate(180deg);
+}
+
+.blitz-faq-item[open] summary {
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid rgba(26, 61, 10, 0.1);
+}
+
+.blitz-faq-item p {
+  padding: 0 0.5rem;
+  line-height: 1.7;
+  color: rgba(0, 0, 0, 0.75);
+}
+
+/* Featured Pricing Card */
+.blitz-pricing-grid .pricing-card.featured {
+  position: relative;
+  border: 3px solid var(--primary, #1a3d0a);
+  transform: scale(1.05);
+  z-index: 2;
+  box-shadow: 0 16px 48px rgba(26, 61, 10, 0.2);
+}
+
+.blitz-pricing-grid .pricing-card.featured::before {
+  content: 'POPULAR';
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent, #f97316);
+  color: white;
+  padding: 4px 16px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+@media (max-width: 782px) {
+  .blitz-pricing-grid .pricing-card.featured {
+    transform: scale(1);
+  }
+}
+
+/* Footer Menu Styles */
+.blitz-footer-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.blitz-footer-menu li {
+  margin-bottom: 0.75rem;
+}
+
+.blitz-footer-menu li a {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  transition: color 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.blitz-footer-menu li a:hover {
+  color: white;
+  text-decoration: underline;
+}
+
+/* Gallery Hover Effects */
+.blitz-gallery-section .wp-block-gallery {
+  gap: 1rem;
+}
+
+.blitz-gallery-section figure {
+  margin: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* CTA Wrapper */
+.blitz-cta-wrapper {
+  position: relative;
+}
+
+/* Team Card Enhancements */
+.blitz-team-section .wp-block-column {
+  text-align: center;
+}
+
+.blitz-team-section .wp-block-image img {
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  margin: 0 auto 1.5rem;
+}
+
+/* Stats Animation Ready */
+.blitz-stats-grid .wp-block-column {
+  position: relative;
+}
+
+.blitz-stats-grid h2 {
+  position: relative;
+  display: inline-block;
+}
+
+/* Content Section Spacing */
+.blitz-content-section .wp-block-columns {
+  align-items: center;
+}
+
+.blitz-content-section .wp-block-image {
+  margin-bottom: 0;
+}
+
+/* Contact Form Enhancements */
+.blitz-contact-section input,
+.blitz-contact-section textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  background: white;
+}
+
+.blitz-contact-section input:focus,
+.blitz-contact-section textarea:focus {
+  outline: none;
+  border-color: var(--primary, #1a3d0a);
+  box-shadow: 0 0 0 3px rgba(26, 61, 10, 0.1);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 782px) {
+  .blitz-faq-item {
+    padding: 1rem;
+  }
+
+  .blitz-team-section .wp-block-image img {
+    width: 150px;
+    height: 150px;
+  }
+
+  .blitz-stats-grid h2 {
+    font-size: 2.5rem !important;
+  }
+}
+
+/* Print Styles for Patterns */
+@media print {
+  .blitz-faq-item[open] summary::after,
+  .blitz-faq-item summary::after {
+    display: none;
+  }
+
+  .blitz-pricing-grid .pricing-card.featured::before {
+    position: static;
+    display: block;
+    margin-bottom: 1rem;
+  }
+}

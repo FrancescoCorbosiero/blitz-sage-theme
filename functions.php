@@ -31,11 +31,7 @@ require $composer;
 |
 */
 
-Application::configure()
-    ->withProviders([
-        App\Providers\ThemeServiceProvider::class,
-    ])
-    ->boot();
+\Roots\bootloader()->boot();
 
 /*
 |--------------------------------------------------------------------------

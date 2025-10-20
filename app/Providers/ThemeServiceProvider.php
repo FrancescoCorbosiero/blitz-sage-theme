@@ -6,6 +6,7 @@ use Roots\Acorn\Sage\SageServiceProvider;
 use App\Services\BlitzThemeService;
 use App\Services\SeoService;
 use App\Services\PerformanceService;
+use App\Patterns\ThemePatterns;
 
 class ThemeServiceProvider extends SageServiceProvider
 {
@@ -29,7 +30,7 @@ class ThemeServiceProvider extends SageServiceProvider
         });
 
         // Register patterns
-        //new ThemePatterns();
+        new ThemePatterns();
     }
 
     /**

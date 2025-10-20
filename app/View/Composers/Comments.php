@@ -289,3 +289,4 @@ class Comments extends Composer
     {
         return comments_open() && (is_user_logged_in() || get_option('comment_registration') == 0);
     }
+}

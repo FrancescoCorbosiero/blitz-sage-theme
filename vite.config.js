@@ -14,17 +14,17 @@ export default defineConfig(({ command, mode }) => {
   const isProduction = mode === 'production'
   const isDevelopment = mode === 'development'
   const isAnalyze = mode === 'analyze'
-  
+
   // Better base URL handling
   const baseUrl = env.VITE_BASE_URL || 
     (env.WP_HOME ? `${env.WP_HOME}/app/themes/blitz-theme/public/build/` : '/app/themes/blitz-theme/public/build/')
-  
+
   return {
     base: baseUrl,
-    
+
     plugins: [
       tailwindcss(),
-      
+
       laravel({
         input: [
           'resources/css/app.css',
@@ -130,7 +130,7 @@ export default defineConfig(({ command, mode }) => {
           level: 11, // Maximum compression for Brotli
         },
       }),
-      
+
       isProduction && compression({
         algorithm: 'gzip',
         ext: '.gz',
@@ -140,24 +140,24 @@ export default defineConfig(({ command, mode }) => {
           level: 9, // Maximum compression for gzip
         },
       }),
-      
+
       // Copy service worker to public directory - ENHANCED
       {
         name: 'copy-sw',
         writeBundle() {
           const swPath = path.resolve(__dirname, 'resources/js/sw.js')
           const destPath = path.resolve(__dirname, 'public/sw.js')
-          
+
           if (fs.existsSync(swPath)) {
             const publicDir = path.dirname(destPath)
             if (!fs.existsSync(publicDir)) {
               fs.mkdirSync(publicDir, { recursive: true })
             }
-            
+
             // Copy the service worker
             fs.copyFileSync(swPath, destPath)
             console.log('✅ Service Worker copied to public/sw.js')
-            
+
             // Also generate a version file for cache busting
             const version = {
               version: Date.now(),
@@ -172,7 +172,7 @@ export default defineConfig(({ command, mode }) => {
           }
         }
       },
-      
+
       // Bundle analyzer for analyze mode
       isAnalyze && {
         name: 'rollup-plugin-visualizer',
@@ -187,7 +187,7 @@ export default defineConfig(({ command, mode }) => {
         }
       },
     ].filter(Boolean),
-    
+
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './resources'),
@@ -202,7 +202,7 @@ export default defineConfig(({ command, mode }) => {
         '@views': path.resolve(__dirname, './resources/views'), // Added views alias
       },
     },
-    
+
     server: {
       // Development server configuration
       host: true, // Listen on all local IPs
@@ -245,7 +245,7 @@ export default defineConfig(({ command, mode }) => {
         interval: 1000,
       },
     },
-    
+
     css: {
       // Extract CSS for better caching in production
       extract: isProduction,
@@ -254,7 +254,7 @@ export default defineConfig(({ command, mode }) => {
       // PostCSS configuration handled by Tailwind
       postcss: {},
     },
-    
+
     build: {
       // Output directory
       outDir: 'public/build',
@@ -372,7 +372,7 @@ export default defineConfig(({ command, mode }) => {
       // Don't report compressed size (faster builds)
       reportCompressedSize: false,
     },
-    
+
     optimizeDeps: {
       // Include dependencies that need pre-bundling
       include: [
@@ -396,7 +396,7 @@ export default defineConfig(({ command, mode }) => {
       // Force optimize on cold start
       force: isDevelopment,
     },
-    
+
     // Performance optimizations
     esbuild: {
       // Drop console and debugger in production
@@ -410,7 +410,7 @@ export default defineConfig(({ command, mode }) => {
       // Keep names for better debugging
       keepNames: !isProduction,
     },
-    
+
     // Preview server configuration
     preview: {
       port: 4173,
@@ -418,7 +418,7 @@ export default defineConfig(({ command, mode }) => {
       host: true,
       cors: true,
     },
-    
+
     // Define global constants
     define: {
       'process.env.NODE_ENV': JSON.stringify(mode),
@@ -427,7 +427,7 @@ export default defineConfig(({ command, mode }) => {
       '__ANALYZE__': isAnalyze,
       '__BUILD_TIME__': JSON.stringify(new Date().toISOString()),
     },
-    
+
     // Worker options
     worker: {
       format: 'es',
