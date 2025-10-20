@@ -3,6 +3,7 @@
 @section('content')
 
     {{-- Hero Section --}}
+    {{-- Blog Section --}}
     @include('sections.hero.parallax')
 
     @include('sections.about.timeline')
