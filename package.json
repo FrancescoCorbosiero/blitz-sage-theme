@@ -6,15 +6,14 @@
   "license": "MIT",
   "private": true,
   "engines": {
-    "node": ">=20.0.0",
-    "npm": ">=10.0.0"
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
   },
   "type": "module",
   "scripts": {
     "dev": "vite",
     "dev:https": "vite --https",
     "build": "vite build",
-    "build:analyze": "vite build --mode analyze",
     "build:production": "NODE_ENV=production vite build",
     "preview": "vite preview",
     "clean": "rm -rf public/build",
@@ -29,16 +28,13 @@
     "translate:compile": "npm run translate:mo && npm run translate:js",
     "translate:js": "wp i18n make-json ./resources/lang --pretty-print",
     "translate:mo": "wp i18n make-mo ./resources/lang ./resources/lang",
-    "test": "echo \"No tests specified\" && exit 0",
-    "postinstall": "npm run build"
+    "test": "echo \"No tests specified\" && exit 0"
   },
   "devDependencies": {
     "@roots/vite-plugin": "^1.0.2",
     "@tailwindcss/vite": "^4.0.9",
     "eslint": "^8.57.0",
-    "laravel-vite-plugin": "^1.2.0",
     "prettier": "^3.2.5",
-    "rollup-plugin-visualizer": "^5.12.0",
     "stylelint": "^16.2.1",
     "stylelint-config-standard": "^36.0.0",
     "tailwindcss": "^4.0.9",
@@ -48,9 +44,7 @@
   },
   "dependencies": {
     "@alpinejs/collapse": "^3.13.3",
-    "@alpinejs/focus": "^3.13.3",
     "@alpinejs/intersect": "^3.13.3",
-    "@alpinejs/persist": "^3.13.3",
     "alpinejs": "^3.13.3",
     "aos": "^2.3.4",
     "flatpickr": "^4.6.13",
