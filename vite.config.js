@@ -198,6 +198,10 @@ export default defineConfig(({ command, mode }) => {
         polyfill: true,
       },
       rollupOptions: {
+        input: {
+          app: path.resolve(__dirname, 'resources/js/app.js'),
+          editor: path.resolve(__dirname, 'resources/js/editor.js'),
+        },
         output: {
           // Asset naming patterns
           assetFileNames: (assetInfo) => {
